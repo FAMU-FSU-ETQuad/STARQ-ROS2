@@ -1,0 +1,216 @@
+import rclpy
+from rclpy.node import Node
+
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Int32MultiArray
+from std_srvs.srv import Empty
+
+import moteus
+import math
+
+# Should stay constant
+MOTOR_COUNT = 8
+
+# Dina's values
+MOTOR_KP = 127.8
+MOTOR_KI = 0.0
+MOTOR_KD = 2.25
+MOTOR_FLUX_BRAKE = 35.5
+
+ZERO_POSITIONS = [0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]
+
+class MotorDriverNode(Node):
+
+    def __init__(self):
+        super().__init__('motor_driver_node')
+
+        # Declare ROS parameters
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('motors', MOTOR_COUNT),
+                ('motor_kp', MOTOR_KP),
+                ('motor_ki', MOTOR_KI),
+                ('motor_kd', MOTOR_KD),
+                ('motor_flux_brake', MOTOR_FLUX_BRAKE)
+                ('zero_positions', ZERO_POSITIONS)
+            ]
+        )
+
+        # Set parameters from launch file
+        (self.motor_count, self.motor_kp, self.motor_ki, self.motor_kd, self.motor_flux_brake, self.zero_positions) = self.get_parameters(
+            ['motors', 'motor_kp', 'motor_ki', 'motor_kd', 'motor_flux_brake', 'zero_positions'])
+
+        # Use FDCANUSB (Power distribution board) for comm
+        self.transport = moteus.Fdcanusb()
+
+        # Create motors with IDs 1-8
+        self.servos = {
+            servo_id : moteus.Controller(id=(servo_id+1))
+            for servo_id in range(self.motor_count)
+        }
+        
+        # Reset motor faults
+        self.reset_faults()
+        self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
+        self.set_flux_brake(self.motor_flux_brake)
+
+        # Create command stream for each motor
+        self.streams = {
+            controller : moteus.Stream(controller)
+            for controller in self.servos
+        }
+
+        # --- SUBSCRIBERS ---
+
+        # Position command subscriber
+        self.cmd_pos_sub = self.create_subscription(
+            Float32MultiArray,
+            '/starq/motors/cmd/position',
+            self.set_position,
+            10
+        )
+
+        # Velocity command subscriber
+        self.cmd_vel_sub = self.create_subscription(
+            Float32MultiArray,
+            '/starq/motors/cmd/velocity',
+            self.set_velocity,
+            10
+        )
+
+        # Place to store motor information
+        self.motor_info = None
+
+        # --- PUBLISHERS ---
+
+        self.info_position_pub = self.create_publisher(
+            Float32MultiArray,
+            '/starq/motors/info/position',
+            10
+        )
+
+        self.info_velocity_pub = self.create_publisher(
+            Float32MultiArray,
+            '/starq/motors/info/velocity',
+            10
+        )
+
+        self.info_torque_pub = self.create_publisher(
+            Float32MultiArray,
+            '/starq/motors/info/torque',
+            10
+        )
+
+        self.info_qcurrent_pub = self.create_publisher(
+            Float32MultiArray,
+            '/starq/motors/info/qcurrent',
+            10
+        )
+
+        self.info_temp_pub = self.create_publisher(
+            Float32MultiArray,
+            '/starq/motors/info/temperature',
+            10
+        )
+
+        self.info_fault_pub = self.create_publisher(
+            Int32MultiArray,
+            '/starq/motors/info/fault',
+            10
+        )
+
+        # --- SERVICES ---
+
+        self.set_as_zero_srv = self.create_service(
+            Empty,
+            '/starq/motors/set_as_zero',
+            self.set_as_zero
+        )
+
+        # -------------------
+
+        # Sample motor information
+        info_sample_rate = 0.1 # seconds
+        self.info_timer = self.create_timer(info_sample_rate, self.publish_info)
+
+        # Done initializing
+        self.get_logger().info('Motor Driver Initialized.')
+
+    # Reset faults function
+    async def reset_faults(self):
+        await self.transport.cycle([servo.make_stop() for servo in self.servos.values()])
+
+    # Set position command callback
+    async def set_position(self, msg):
+        commands = {
+            servo.make_position( 
+                position=msg.data[idx],
+                velocity=math.nan
+                )
+            for idx, servo in self.servos.items()
+        }
+        self.transport.cycle(commands)
+
+    # Set velocity command callback
+    async def set_velocity(self, msg):
+        commands = {
+            servo.make_position( 
+                position=math.nan,
+                velocity=msg.data[idx]
+                )
+            for idx, servo in self.servos.items()
+        }
+        self.transport.cycle(commands)
+
+    # Sample motor information callback
+    def publish_info(self):
+        positions = Float32MultiArray()
+        velocities = Float32MultiArray()
+        torques = Float32MultiArray()
+        qcurrents = Float32MultiArray()
+        temps = Float32MultiArray()
+        faults = Int32MultiArray()
+        for idx, servo in self.servos.items():
+            result = servo.query() # Request latest info
+            positions.data[idx] = result.values[moteus.Register.POSITION]
+            velocities.data[idx] = result.values[moteus.Register.VELOCITY]
+            torques.data[idx] = result.values[moteus.Register.TORQUE]
+            qcurrents.data[idx] = result.values[moteus.Register.Q_CURRENT]
+            temps.data[idx] = result.values[moteus.Register.TEMPERATURE]
+            faults.data[idx] = result.values[moteus.Register.FAULT]
+        self.info_position_pub.publish(positions)
+        self.info_velocity_pub.publish(velocities)
+        self.info_torque_pub.publish(torques)
+        self.info_qcurrent_pub.publish(qcurrents)
+        self.info_temp_pub.publish(temps)
+        self.info_fault_pub.publish(faults)
+
+    # Set motor gains
+    async def set_gains(self, KP, KI, KD):
+        for stream in self.streams.values():
+            await stream.command(bytes("conf set servo.pid_position.kp " + str(KP)))
+            await stream.command(bytes("conf set servo.pid_position.ki " + str(KI)))
+            await stream.command(bytes("conf set servo.pid_position.kd " + str(KD)))
+        
+    # Set flux brake
+    async def set_flux_brake(self, V):
+        for stream in self.streams.values():
+            await stream.command(bytes("conf set servo.flux_brake_min_voltage " + str(V)))
+
+    # Set motor positions to zero
+    async def set_as_zero(self, request, response):
+        for idx, servo in self.servos.items():
+            servo.set_output_exact(position = self.zero_positions[idx])
+        return response
+
+# ROS Entry
+def main(args=None):
+    rclpy.init(args=args)
+    motor_driver = MotorDriverNode()
+    rclpy.spin(motor_driver)
+    motor_driver.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
