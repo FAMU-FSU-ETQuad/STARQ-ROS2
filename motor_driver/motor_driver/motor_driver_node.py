@@ -150,7 +150,7 @@ class MotorDriverNode(Node):
                 )
             for idx, servo in self.servos.items()
         }
-        self.transport.cycle(commands)
+        await self.transport.cycle(commands)
 
     # Set velocity command callback
     async def set_velocity(self, msg):
@@ -161,7 +161,7 @@ class MotorDriverNode(Node):
                 )
             for idx, servo in self.servos.items()
         }
-        self.transport.cycle(commands)
+        await self.transport.cycle(commands)
 
     # Sample motor information callback
     def publish_info(self):
@@ -201,7 +201,7 @@ class MotorDriverNode(Node):
     # Set motor positions to zero
     async def set_as_zero(self, request, response):
         for idx, servo in self.servos.items():
-            servo.set_output_exact(position = self.zero_positions[idx])
+            await servo.set_output_exact(position = self.zero_positions[idx])
         return response
 
 # ROS Entry
