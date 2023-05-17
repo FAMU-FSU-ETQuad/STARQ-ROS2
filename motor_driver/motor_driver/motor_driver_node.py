@@ -130,7 +130,7 @@ class MotorDriverNode(Node):
 
         # Sample motor information
         info_sample_rate = 0.1 # seconds
-        self.info_timer = self.create_timer(info_sample_rate, self.publish_info)
+        self.info_timer = self.create_timer(info_sample_rate, self.publish_info_callback)
 
         # Done initializing
         self.get_logger().info('Motor Driver Initialized.')
@@ -196,6 +196,9 @@ class MotorDriverNode(Node):
         }
         await self.transport.cycle(commands)
 
+    def publish_info_callback(self):
+        asyncio.run(self.publish_info())
+
     # Sample motor information callback
     async def publish_info(self):
 
@@ -225,11 +228,8 @@ class MotorDriverNode(Node):
     # Set motor gains
     async def set_gains(self, KP, KI, KD):
         for idx, stream in self.streams.items():
-            self.get_logger().info('A Stream')
             await stream.command(bytes(str("conf set servo.pid_position.kp " + str(KP)), 'utf-8'))
-            self.get_logger().info('B Stream')
             await stream.command(bytes(str("conf set servo.pid_position.ki " + str(KI)), 'utf-8'))
-            self.get_logger().info('C Stream')
             await stream.command(bytes(str("conf set servo.pid_position.kd " + str(KD)), 'utf-8'))
         
     # Set flux brake
