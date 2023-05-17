@@ -143,7 +143,7 @@ class MotorDriverNode(Node):
 
         # Create motors with IDs
         self.servos = {
-            idx : moteus.Controller(id=self.motor_ids[idx])
+            idx : moteus.Controller(id=self.motor_ids[idx], transport=self.transport)
             for idx in range(len(self.motor_ids))
         }
 
@@ -158,12 +158,12 @@ class MotorDriverNode(Node):
         self.get_logger().info('Streams Initialized.')
         
         # Reset motor faults
-        self.reset_faults()
-        self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
-        self.set_flux_brake(self.motor_flux_brake)
+        await self.reset_faults()
+        await self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
+        await self.set_flux_brake(self.motor_flux_brake)
 
         if self.rezero_on_start:
-            self.set_as_zero(None, None)
+            await self.set_as_zero(None, None)
 
         self.get_logger().info('Motors Initialized.')
 
