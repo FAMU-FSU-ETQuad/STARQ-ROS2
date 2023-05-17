@@ -140,12 +140,12 @@ class MotorDriverNode(Node):
         }
         
         # Reset motor faults
-        self.reset_faults()
-        self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
-        self.set_flux_brake(self.motor_flux_brake)
+        await self.reset_faults()
+        await self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
+        await self.set_flux_brake(self.motor_flux_brake)
 
         if self.rezero_on_start:
-            self.set_as_zero(None, None)
+            await self.set_as_zero(None, None)
 
         # Create command stream for each motor
         self.streams = {
@@ -180,7 +180,7 @@ class MotorDriverNode(Node):
         await self.transport.cycle(commands)
 
     # Sample motor information callback
-    def publish_info(self):
+    async def publish_info(self):
         positions = Float32MultiArray()
         velocities = Float32MultiArray()
         torques = Float32MultiArray()
@@ -188,7 +188,7 @@ class MotorDriverNode(Node):
         temps = Float32MultiArray()
         faults = Int32MultiArray()
         for idx, servo in self.servos.items():
-            result = servo.query() # Request latest info
+            result = await servo.make_query() # Request latest info
             positions.data[idx] = result.values[moteus.Register.POSITION]
             velocities.data[idx] = result.values[moteus.Register.VELOCITY]
             torques.data[idx] = result.values[moteus.Register.TORQUE]
