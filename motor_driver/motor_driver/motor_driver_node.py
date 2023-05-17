@@ -51,8 +51,10 @@ class MotorDriverNode(Node):
         self.zero_positions = p_zero_positions.get_parameter_value().double_array_value
         self.rezero_on_start = p_rezero_on_start.get_parameter_value().bool_value
 
+        self.get_logger().info('Parameters Saved.')
+
         # Initialize controllers
-        self.init_controllers()
+        asyncio.run(self.init_controllers())
 
         # --- SUBSCRIBERS ---
 
@@ -71,6 +73,8 @@ class MotorDriverNode(Node):
             self.set_velocity,
             10
         )
+
+        self.get_logger().info('Subscribers created.')
 
         # --- PUBLISHERS ---
 
@@ -110,6 +114,8 @@ class MotorDriverNode(Node):
             10
         )
 
+        self.get_logger().info('Publishers created.')
+
         # --- SERVICES ---
 
         self.set_as_zero_srv = self.create_service(
@@ -117,6 +123,8 @@ class MotorDriverNode(Node):
             '/starq/motors/set_as_zero',
             self.set_as_zero
         )
+
+        self.get_logger().info('Services created.')
 
         # -------------------
 
@@ -139,11 +147,15 @@ class MotorDriverNode(Node):
             for idx in range(len(self.motor_ids))
         }
 
+        self.get_logger().info('Controllers Initialized.')
+
         # Create command stream for each motor
         self.streams = {
             idx : moteus.Stream(controller)
             for idx, controller in self.servos.items()
         }
+
+        self.get_logger().info('Streams Initialized.')
         
         # Reset motor faults
         await self.reset_faults()
@@ -152,6 +164,8 @@ class MotorDriverNode(Node):
 
         if self.rezero_on_start:
             await self.set_as_zero(None, None)
+
+        self.get_logger().info('Motors Initialized.')
 
     # Reset faults function
     async def reset_faults(self):
