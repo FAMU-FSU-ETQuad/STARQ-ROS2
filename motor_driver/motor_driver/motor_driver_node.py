@@ -209,7 +209,11 @@ class MotorDriverNode(Node):
         temps = Float32MultiArray()
         faults = Int32MultiArray()
 
-        results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
+        results = await self.transport.cycle(
+            servo.make_position(position=math.nan, query=True) 
+            for servo in self.servos.values()
+        )
+
         for result in results:
             positions.data.append(result.values[moteus.Register.POSITION])
             velocities.data.append(result.values[moteus.Register.VELOCITY])
