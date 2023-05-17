@@ -129,15 +129,15 @@ class MotorDriverNode(Node):
         # Create motors with IDs
         self.servos = {
             idx : moteus.Controller(id=self.motors_ids[idx])
-            for idx in range(len(self.motor_ids))
+            for idx in range(len(self.motor_ids.get_parameter_value().integer_array_value))
         }
         
         # Reset motor faults
         self.reset_faults()
         self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
-        self.set_flux_brake(motor_flux_brake)
+        self.set_flux_brake(self.motor_flux_brake)
 
-        if rezero_on_start:
+        if self.rezero_on_start:
             self.set_as_zero(Empty(), Empty())
 
         # Create command stream for each motor
