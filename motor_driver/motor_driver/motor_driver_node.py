@@ -8,16 +8,17 @@ from std_srvs.srv import Empty
 import moteus
 import math
 
-# Should stay constant
-MOTOR_COUNT = 8
+# Boom motors
+MOTOR_IDS = [9, 10]
 
 # Dina's values
 MOTOR_KP = 127.8
 MOTOR_KI = 0.0
 MOTOR_KD = 2.25
 MOTOR_FLUX_BRAKE = 35.5
-
 ZERO_POSITIONS = [0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]
+
+REZERO_ON_START = True
 
 class MotorDriverNode(Node):
 
@@ -28,32 +29,36 @@ class MotorDriverNode(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('motors', MOTOR_COUNT),
+                ('motor_ids', MOTOR_IDS),
                 ('motor_kp', MOTOR_KP),
                 ('motor_ki', MOTOR_KI),
                 ('motor_kd', MOTOR_KD),
-                ('motor_flux_brake', MOTOR_FLUX_BRAKE)
-                ('zero_positions', ZERO_POSITIONS)
+                ('motor_flux_brake', MOTOR_FLUX_BRAKE),
+                ('zero_positions', ZERO_POSITIONS),
+                ('rezero_on_start', REZERO_ON_START)
             ]
         )
 
         # Set parameters from launch file
-        (self.motor_count, self.motor_kp, self.motor_ki, self.motor_kd, self.motor_flux_brake, self.zero_positions) = self.get_parameters(
-            ['motors', 'motor_kp', 'motor_ki', 'motor_kd', 'motor_flux_brake', 'zero_positions'])
+        (self.motor_ids, motor_kp, motor_ki, motor_kd, motor_flux_brake, self.zero_positions, rezero_on_start) = self.get_parameters(
+            ['motor_ids', 'motor_kp', 'motor_ki', 'motor_kd', 'motor_flux_brake', 'zero_positions', 'rezero_on_start'])
 
         # Use FDCANUSB (Power distribution board) for comm
         self.transport = moteus.Fdcanusb()
 
-        # Create motors with IDs 1-8
+        # Create motors with IDs
         self.servos = {
-            servo_id : moteus.Controller(id=(servo_id+1))
-            for servo_id in range(self.motor_count)
+            idx : moteus.Controller(id=self.motors_ids[idx])
+            for idx in range(len(self.motor_ids))
         }
         
         # Reset motor faults
         self.reset_faults()
-        self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
-        self.set_flux_brake(self.motor_flux_brake)
+        self.set_gains(motor_kp, motor_ki, motor_kd)
+        self.set_flux_brake(motor_flux_brake)
+
+        if rezero_on_start:
+            self.set_as_zero(Empty(), Empty())
 
         # Create command stream for each motor
         self.streams = {
@@ -78,9 +83,6 @@ class MotorDriverNode(Node):
             self.set_velocity,
             10
         )
-
-        # Place to store motor information
-        self.motor_info = None
 
         # --- PUBLISHERS ---
 
