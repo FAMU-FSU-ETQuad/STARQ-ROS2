@@ -52,7 +52,7 @@ class MotorDriverNode(Node):
         self.rezero_on_start = p_rezero_on_start.get_parameter_value().bool_value
 
         # Initialize controllers
-        asyncio.run(self.init_controllers())
+        self.init_controllers()
 
         # --- SUBSCRIBERS ---
 
