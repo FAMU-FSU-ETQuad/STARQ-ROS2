@@ -41,8 +41,15 @@ class MotorDriverNode(Node):
         )
 
         # Set parameters from launch file
-        (self.motor_ids, self.motor_kp, self.motor_ki, self.motor_kd, self.motor_flux_brake, self.zero_positions, self.rezero_on_start) = self.get_parameters(
+        (p_motor_ids, p_motor_kp, p_motor_ki, p_motor_kd, p_motor_flux_brake, p_zero_positions, p_rezero_on_start) = self.get_parameters(
             ['motor_ids', 'motor_kp', 'motor_ki', 'motor_kd', 'motor_flux_brake', 'zero_positions', 'rezero_on_start'])
+        self.motor_ids = p_motor_ids.get_parameter_value().integer_array_value
+        self.motor_kp = p_motor_kp.get_parameter_value().double_value
+        self.motor_ki = p_motor_ki.get_parameter_value().double_value
+        self.motor_kd = p_motor_kd.get_parameter_value().double_value
+        self.motor_flux_brake = p_motor_flux_brake.get_parameter_value().double_value
+        self.zero_positions = p_zero_positions.get_parameter_value().double_array_value
+        self.rezero_on_start = p_rezero_on_start.get_parameter_value().bool_value
 
         # Initialize controllers
         asyncio.run(self.init_controllers())
@@ -129,7 +136,7 @@ class MotorDriverNode(Node):
         # Create motors with IDs
         self.servos = {
             idx : moteus.Controller(id=self.motor_ids[idx])
-            for idx in range(len(self.motor_ids.get_parameter_value().integer_array_value))
+            for idx in range(len(self.motor_ids))
         }
         
         # Reset motor faults
