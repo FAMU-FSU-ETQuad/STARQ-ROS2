@@ -25,7 +25,9 @@ class MotorDriverNode(Node):
 
     def __init__(self):
         super().__init__('motor_driver_node')
+        asyncio.run(self.main())
 
+    async def main(self):
         # Declare ROS parameters
         self.declare_parameters(
             namespace='',
@@ -54,7 +56,7 @@ class MotorDriverNode(Node):
         self.get_logger().info('Parameters Saved.')
 
         # Initialize controllers
-        self.init_controllers()
+        await self.init_controllers()
 
         # --- SUBSCRIBERS ---
 
