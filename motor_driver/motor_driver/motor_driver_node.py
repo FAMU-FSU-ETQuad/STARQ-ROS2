@@ -159,8 +159,11 @@ class MotorDriverNode(Node):
         
         # Reset motor faults
         await self.reset_faults()
+        self.get_logger().info('Reset Faults.')
         await self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
+        self.get_logger().info('Set Motor Gains.')
         await self.set_flux_brake(self.motor_flux_brake)
+        self.get_logger().info('Set Motor Flux Brake.')
 
         if self.rezero_on_start:
             await self.set_as_zero(None, None)
