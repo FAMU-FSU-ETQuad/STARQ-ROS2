@@ -17,7 +17,7 @@ MOTOR_KP = 127.8
 MOTOR_KI = 0.0
 MOTOR_KD = 2.25
 MOTOR_FLUX_BRAKE = 35.5
-ZERO_POSITIONS = [0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]
+ZERO_POSITIONS = [0.0, 0.5]
 
 REZERO_ON_START = True
 
@@ -206,14 +206,14 @@ class MotorDriverNode(Node):
         temps = Float32MultiArray()
         faults = Int32MultiArray()
 
-        for idx, servo in self.servos.items():
-            result = await servo.query()
-            positions.data[idx] = result.values[moteus.Register.POSITION]
-            velocities.data[idx] = result.values[moteus.Register.VELOCITY]
-            torques.data[idx] = result.values[moteus.Register.TORQUE]
-            qcurrents.data[idx] = result.values[moteus.Register.Q_CURRENT]
-            temps.data[idx] = result.values[moteus.Register.TEMPERATURE]
-            faults.data[idx] = result.values[moteus.Register.FAULT]
+        results = self.transport.cycle(servo.make_query() for servo in self.servos.values())
+        for result in results:
+            positions.data.append(result.values[moteus.Register.POSITION])
+            velocities.data.append(result.values[moteus.Register.VELOCITY])
+            torques.data.append(result.values[moteus.Register.TORQUE])
+            qcurrents.data.append(result.values[moteus.Register.Q_CURRENT])
+            temps.data.append(result.values[moteus.Register.TEMPERATURE])
+            faults.data.append(result.values[moteus.Register.FAULT])
 
         self.info_position_pub.publish(positions)
         self.info_velocity_pub.publish(velocities)
