@@ -54,7 +54,7 @@ class MotorDriverNode(Node):
         self.get_logger().info('Parameters Saved.')
 
         # Initialize controllers
-        asyncio.run(self.init_controllers())
+        self.init_controllers()
 
         # --- SUBSCRIBERS ---
 
@@ -130,7 +130,7 @@ class MotorDriverNode(Node):
 
         # Sample motor information
         info_sample_rate = 0.1 # seconds
-        self.info_timer = self.create_timer(info_sample_rate, self.publish_info_callback)
+        self.info_timer = self.create_timer(info_sample_rate, self.publish_info)
 
         # Done initializing
         self.get_logger().info('Motor Driver Initialized.')
@@ -196,9 +196,6 @@ class MotorDriverNode(Node):
         }
         await self.transport.cycle(commands)
 
-    def publish_info_callback(self):
-        asyncio.run(self.publish_info())
-
     # Sample motor information callback
     async def publish_info(self):
 
@@ -209,11 +206,7 @@ class MotorDriverNode(Node):
         temps = Float32MultiArray()
         faults = Int32MultiArray()
 
-        results = await self.transport.cycle(
-            servo.make_position(position=math.nan, query=True) 
-            for servo in self.servos.values()
-        )
-
+        results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
         for result in results:
             positions.data.append(result.values[moteus.Register.POSITION])
             velocities.data.append(result.values[moteus.Register.VELOCITY])
