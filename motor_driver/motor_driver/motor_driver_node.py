@@ -5,6 +5,7 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Int32MultiArray
 from std_srvs.srv import Empty
 
+import asyncio
 import moteus
 import math
 
@@ -40,31 +41,11 @@ class MotorDriverNode(Node):
         )
 
         # Set parameters from launch file
-        (self.motor_ids, motor_kp, motor_ki, motor_kd, motor_flux_brake, self.zero_positions, rezero_on_start) = self.get_parameters(
+        (self.motor_ids, self.motor_kp, self.motor_ki, self.motor_kd, self.motor_flux_brake, self.zero_positions, self.rezero_on_start) = self.get_parameters(
             ['motor_ids', 'motor_kp', 'motor_ki', 'motor_kd', 'motor_flux_brake', 'zero_positions', 'rezero_on_start'])
 
-        # Use FDCANUSB (Power distribution board) for comm
-        self.transport = moteus.Fdcanusb()
-
-        # Create motors with IDs
-        self.servos = {
-            idx : moteus.Controller(id=self.motors_ids[idx])
-            for idx in range(len(self.motor_ids))
-        }
-        
-        # Reset motor faults
-        self.reset_faults()
-        self.set_gains(motor_kp, motor_ki, motor_kd)
-        self.set_flux_brake(motor_flux_brake)
-
-        if rezero_on_start:
-            self.set_as_zero(Empty(), Empty())
-
-        # Create command stream for each motor
-        self.streams = {
-            controller : moteus.Stream(controller)
-            for controller in self.servos
-        }
+        # Initialize controllers
+        asyncio.run(self.init_controllers())
 
         # --- SUBSCRIBERS ---
 
@@ -138,6 +119,32 @@ class MotorDriverNode(Node):
 
         # Done initializing
         self.get_logger().info('Motor Driver Initialized.')
+
+    # Initialize motor controllers
+    async def init_controllers(self):
+
+        # Use FDCANUSB (Power distribution board) for comm
+        self.transport = moteus.Fdcanusb()
+
+        # Create motors with IDs
+        self.servos = {
+            idx : moteus.Controller(id=self.motors_ids[idx])
+            for idx in range(len(self.motor_ids))
+        }
+        
+        # Reset motor faults
+        self.reset_faults()
+        self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
+        self.set_flux_brake(motor_flux_brake)
+
+        if rezero_on_start:
+            self.set_as_zero(Empty(), Empty())
+
+        # Create command stream for each motor
+        self.streams = {
+            controller : moteus.Stream(controller)
+            for controller in self.servos
+        }
 
     # Reset faults function
     async def reset_faults(self):
