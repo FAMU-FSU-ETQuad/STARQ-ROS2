@@ -188,7 +188,7 @@ class MotorDriverNode(Node):
         temps = Float32MultiArray()
         faults = Int32MultiArray()
         for idx, servo in self.servos.items():
-            result = await servo.make_query() # Request latest info
+            result = servo.make_query() # Request latest info
             positions.data[idx] = result.values[moteus.Register.POSITION]
             velocities.data[idx] = result.values[moteus.Register.VELOCITY]
             torques.data[idx] = result.values[moteus.Register.TORQUE]
