@@ -138,6 +138,12 @@ class MotorDriverNode(Node):
             idx : moteus.Controller(id=self.motor_ids[idx])
             for idx in range(len(self.motor_ids))
         }
+
+        # Create command stream for each motor
+        self.streams = {
+            controller : moteus.Stream(controller)
+            for controller in self.servos
+        }
         
         # Reset motor faults
         await self.reset_faults()
@@ -146,12 +152,6 @@ class MotorDriverNode(Node):
 
         if self.rezero_on_start:
             await self.set_as_zero(None, None)
-
-        # Create command stream for each motor
-        self.streams = {
-            controller : moteus.Stream(controller)
-            for controller in self.servos
-        }
 
     # Reset faults function
     async def reset_faults(self):
