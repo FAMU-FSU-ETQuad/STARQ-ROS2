@@ -224,9 +224,12 @@ class MotorDriverNode(Node):
 
     # Set motor gains
     async def set_gains(self, KP, KI, KD):
-        for stream in self.streams.values():
+        for idx, stream in self.streams.items():
+            self.get_logger().info('A Stream %d', idx)
             await stream.command(bytes(str("conf set servo.pid_position.kp " + str(KP)), 'utf-8'))
+            self.get_logger().info('B Stream %d', idx)
             await stream.command(bytes(str("conf set servo.pid_position.ki " + str(KI)), 'utf-8'))
+            self.get_logger().info('C Stream %d', idx)
             await stream.command(bytes(str("conf set servo.pid_position.kd " + str(KD)), 'utf-8'))
         
     # Set flux brake
