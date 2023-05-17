@@ -128,7 +128,7 @@ class MotorDriverNode(Node):
 
         # Create motors with IDs
         self.servos = {
-            idx : moteus.Controller(id=self.motors_ids[idx])
+            idx : moteus.Controller(id=self.motor_ids[idx])
             for idx in range(len(self.motor_ids.get_parameter_value().integer_array_value))
         }
         
