@@ -195,20 +195,29 @@ class MotorDriverNode(Node):
 
     # Sample motor information callback
     async def publish_info(self):
+
+        query_commands = {
+            servo.make_query()
+            for servo in self.servos.values()
+        }
+
         positions = Float32MultiArray()
         velocities = Float32MultiArray()
         torques = Float32MultiArray()
         qcurrents = Float32MultiArray()
         temps = Float32MultiArray()
         faults = Int32MultiArray()
-        for idx, servo in self.servos.items():
-            result = servo.make_query() # Request latest info
+
+        results = await self.transport.cycle(query_commands)
+        for idx in range(len(results)):
+            result = results[idx]
             positions.data[idx] = result.values[moteus.Register.POSITION]
             velocities.data[idx] = result.values[moteus.Register.VELOCITY]
             torques.data[idx] = result.values[moteus.Register.TORQUE]
             qcurrents.data[idx] = result.values[moteus.Register.Q_CURRENT]
             temps.data[idx] = result.values[moteus.Register.TEMPERATURE]
             faults.data[idx] = result.values[moteus.Register.FAULT]
+            
         self.info_position_pub.publish(positions)
         self.info_velocity_pub.publish(velocities)
         self.info_torque_pub.publish(torques)
