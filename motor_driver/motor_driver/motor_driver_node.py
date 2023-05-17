@@ -142,7 +142,7 @@ class MotorDriverNode(Node):
         # Create command stream for each motor
         self.streams = {
             idx : moteus.Stream(controller)
-            for idx, controller in self.servos
+            for idx, controller in self.servos.items()
         }
         
         # Reset motor faults
