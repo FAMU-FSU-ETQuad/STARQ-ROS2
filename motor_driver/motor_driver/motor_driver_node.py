@@ -145,7 +145,7 @@ class MotorDriverNode(Node):
         self.set_flux_brake(self.motor_flux_brake)
 
         if self.rezero_on_start:
-            self.set_as_zero(Empty(), Empty())
+            self.set_as_zero()
 
         # Create command stream for each motor
         self.streams = {
