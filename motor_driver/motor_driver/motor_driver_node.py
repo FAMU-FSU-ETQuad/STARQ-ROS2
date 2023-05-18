@@ -250,15 +250,11 @@ class MotorDriverNode(Node):
             f"{result.values[moteus.Register.VELOCITY]})"
             for result in results))
 
-        pos = results[0].values[moteus.Register.POSITION]
-        posf = float(pos)
-        print("POSITION: " + str(posf))
-
         # Process each result
         for result in results:
             for reg, pub in reg_pub_map.items():
                 self.get_logger().info("REGISTER:" + str(reg))
-                self.get_logger().info(str(reg) + ": " + result.values[reg])
+                self.get_logger().info(str(reg) + ": " + str(float(result.values[reg])))
                 #pub_data_map[pub].data.append(result.values[reg])
 
         # Publish all messages
