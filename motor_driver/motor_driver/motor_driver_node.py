@@ -188,7 +188,8 @@ class MotorDriverNode(Node):
 
     # Set position command callback
     def set_position_callback(self, msg):
-        asyncio.create_task(self.set_position(msg))
+        self.get_logger().info("Setting motor position.")
+        asyncio.run_coroutine_threadsafe(self.set_position(msg), self.loop)
 
     async def set_position(self, msg):
         commands = {
@@ -202,7 +203,8 @@ class MotorDriverNode(Node):
 
     # Set velocity command callback
     def set_velocity_callback(self, msg):
-        asyncio.create_task(self.set_velocity(msg))
+        self.get_logger().info("Setting motor velocity.")
+        asyncio.run_coroutine_threadsafe(self.set_velocity(msg), self.loop)
 
     async def set_velocity(self, msg):
         commands = {
@@ -253,7 +255,6 @@ class MotorDriverNode(Node):
             pub.publish(msg)
 
         self.get_logger().info("Motor information published.")
-
 
 
     # Reset faults function
