@@ -214,8 +214,9 @@ class MotorDriverNode(Node):
         }
         await self.transport.cycle(commands)
 
-    # Modify the callback to use asyncio.run_coroutine_threadsafe
+    # Publish motor information callback
     def publish_info_callback(self):
+        self.get_logger().info("Publish motor timer callback.")
         asyncio.run_coroutine_threadsafe(self.publish_info(), self.loop)
 
     async def publish_info(self):
@@ -240,6 +241,7 @@ class MotorDriverNode(Node):
         }
 
         # Query all servo states
+        self.get_logger().info("Querying motor information.")
         results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
         
         # Process each result
