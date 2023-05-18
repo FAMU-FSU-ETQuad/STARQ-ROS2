@@ -244,9 +244,12 @@ class MotorDriverNode(Node):
         results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
         self.get_logger().info("Motor information recieved.")
 
+        print(results)
+
         # Process each result
         for result in results:
             for reg, pub in reg_pub_map.items():
+                self.get_logger().info("REGISTER:" + str(reg))
                 self.get_logger().info(str(reg) + ": " + result.values[reg])
                 pub_data_map[pub].data.append(result.values[reg])
 
