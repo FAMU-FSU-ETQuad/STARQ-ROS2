@@ -312,7 +312,7 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
-        await motor_driver_node.destroy_node()
+        motor_driver_node.destroy_node()
         rclpy.shutdown()
         spin_thread.join()
 
