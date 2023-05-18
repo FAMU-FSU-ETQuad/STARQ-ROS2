@@ -28,6 +28,8 @@ class MotorDriverNode(Node):
     def __init__(self):
         super().__init__('motor_driver_node')
 
+        self.get_logger().info('Initializing motor driver node.')
+
         # Declare ROS parameters
         self.declare_parameters(
             namespace='',
@@ -53,7 +55,7 @@ class MotorDriverNode(Node):
         self.zero_positions = p_zero_positions.get_parameter_value().double_array_value
         self.rezero_on_start = p_rezero_on_start.get_parameter_value().bool_value
 
-        self.get_logger().info('Parameters Saved.')
+        self.get_logger().info('Parameters saved.')
 
         # --- SUBSCRIBERS ---
 
@@ -142,7 +144,7 @@ class MotorDriverNode(Node):
             for idx in range(len(self.motor_ids))
         }
 
-        self.get_logger().info('Controllers Initialized.')
+        self.get_logger().info('Controllers initialized.')
 
         # Create command stream for each motor
         self.streams = {
@@ -150,10 +152,10 @@ class MotorDriverNode(Node):
             for idx, controller in self.servos.items()
         }
 
-        self.get_logger().info('Streams Initialized.')
+        self.get_logger().info('Streams initialized.')
 
         # Done initializing
-        self.get_logger().info('Motor Driver Initialized.')
+        self.get_logger().info('Motor Driver initialized.')
 
     @classmethod
     async def create(cls):
@@ -165,21 +167,19 @@ class MotorDriverNode(Node):
         return self
 
     async def main(self):
-        
+        self.get_logger().info('Initializing motors.')
         # Reset motor faults
         await self.reset_faults()
-        self.get_logger().info('Reset Faults.')
-        await self.reset_gains()
-        self.get_logger().info('Reset Gains.')
+        self.get_logger().info('Reset faults.')
         await self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
-        self.get_logger().info('Set Motor Gains.')
+        self.get_logger().info('Set motor gains.')
         await self.set_flux_brake(self.motor_flux_brake)
-        self.get_logger().info('Set Motor Flux Brake.')
+        self.get_logger().info('Set motor flux brake.')
 
         if self.rezero_on_start:
             await self.set_as_zero(None, None)
 
-        self.get_logger().info('Motors Initialized.')
+        self.get_logger().info('Motors initialized.')
 
     # Set position command callback
     def set_position_callback(self, msg):
@@ -278,7 +278,9 @@ class MotorDriverNode(Node):
     # Set flux brake
     async def set_flux_brake(self, V):
         for idx, stream in self.streams.items():
+            self.get_logger().info("Setting flux brake for motor " + str(self.motor_ids[idx]))
             await stream.command(bytes("conf set servo.flux_brake_min_voltage " + str(V[idx]), 'utf-8'))
+            self.get_logger().info("Set FB = " + str(V[idx]))
 
     # Set motor positions to zero
     async def set_as_zero(self, request, response):
@@ -286,6 +288,7 @@ class MotorDriverNode(Node):
             servo.make_set_output_exact(position = self.zero_positions[idx])
             for idx, servo in self.servos.items()
         ])
+        self.get_logger().info('Motors Re-zeroed')
 
 
 # ROS Entry
