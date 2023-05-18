@@ -225,9 +225,8 @@ class MotorDriverNode(Node):
             self.info_position_pub: Float32MultiArray(),
             self.info_velocity_pub: Float32MultiArray(),
             self.info_torque_pub: Float32MultiArray(),
-            self.info_qcurrent_pub: Float32MultiArray(),
             self.info_temp_pub: Float32MultiArray(),
-            self.info_fault_pub: Int32MultiArray(),
+            #self.info_fault_pub: Int32MultiArray(),
         }
 
         # Create a mapping of register to publisher
@@ -235,27 +234,18 @@ class MotorDriverNode(Node):
             moteus.Register.POSITION: self.info_position_pub,
             moteus.Register.VELOCITY: self.info_velocity_pub,
             moteus.Register.TORQUE: self.info_torque_pub,
-            moteus.Register.Q_CURRENT: self.info_qcurrent_pub,
             moteus.Register.TEMPERATURE: self.info_temp_pub,
-            moteus.Register.FAULT: self.info_fault_pub,
+            #moteus.Register.FAULT: self.info_fault_pub,
         }
 
         # Query all servo states
         results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
         self.get_logger().info("Motor information recieved.")
 
-        print(", ".join(
-            f"({result.arbitration_id} " +
-            f"{result.values[moteus.Register.POSITION]} " +
-            f"{result.values[moteus.Register.VELOCITY]})"
-            for result in results))
-
         # Process each result
         for result in results:
             for reg, pub in reg_pub_map.items():
-                self.get_logger().info("REGISTER:" + str(reg))
-                self.get_logger().info(str(reg) + ": " + str(float(result.values[reg])))
-                #pub_data_map[pub].data.append(result.values[reg])
+                pub_data_map[pub].data.append(float(result.values[reg]))
 
         # Publish all messages
         self.get_logger().info("PUBLISH")
