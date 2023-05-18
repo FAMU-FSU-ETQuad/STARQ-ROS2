@@ -265,6 +265,13 @@ class MotorDriverNode(Node):
             self.get_logger().info("Set KI = " + str(KI[idx]))
             await stream.command(bytes(str("conf set servo.pid_position.kd " + str(KD[idx])), 'utf-8'))
             self.get_logger().info("Set KD = " + str(KD[idx]))
+
+    async def reset_gains(self):
+        for idx, stream in self.streams.items():
+            self.get_logger().info("Resetting gains for motor " + str(self.motor_ids[idx]))
+            await stream.command(bytes(str("conf set servo.pid_position.kp 0.0"), 'utf-8'))
+            await stream.command(bytes(str("conf set servo.pid_position.ki 0.0"), 'utf-8'))
+            await stream.command(bytes(str("conf set servo.pid_position.kd 0.0"), 'utf-8'))
         
     # Set flux brake
     async def set_flux_brake(self, V):
@@ -277,6 +284,11 @@ class MotorDriverNode(Node):
             servo.make_set_output_exact(position = self.zero_positions[idx])
             for idx, servo in self.servos.items()
         ])
+
+    async def destroy_node(self):
+        await self.reset_gains()
+        super().destroy_node()
+
 
 # ROS Entry
 def main(args=None):
@@ -300,7 +312,7 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
-        motor_driver_node.destroy_node()
+        await motor_driver_node.destroy_node()
         rclpy.shutdown()
         spin_thread.join()
 
