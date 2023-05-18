@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.executors import SingleThreadedExecutor
+from rclpy.task import create_task
 
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Int32MultiArray
@@ -183,11 +184,7 @@ class MotorDriverNode(Node):
 
     # Set position command callback
     def set_position_callback(self, msg):
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.create_task(self.set_position(msg))
-        else:
-            loop.run_until_complete(self.set_position(msg))
+        asyncio.create_task(self.set_position(msg))
 
     async def set_position(self, msg):
         commands = {
@@ -201,11 +198,7 @@ class MotorDriverNode(Node):
 
     # Set velocity command callback
     def set_velocity_callback(self, msg):
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.create_task(self.set_velocity(msg))
-        else:
-            loop.run_until_complete(self.set_velocity(msg))
+        asyncio.create_task(self.set_velocity(msg))
 
     async def set_velocity(self, msg):
         commands = {
@@ -219,12 +212,7 @@ class MotorDriverNode(Node):
 
     # Publish motor information callback
     def publish_info_callback(self):
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.create_task(self.publish_info())
-        else:
-            loop.run_until_complete(self.publish_info())
-
+        create_task(self.publish_info())
 
     async def publish_info(self):
         # Create a mapping of publisher to data array
