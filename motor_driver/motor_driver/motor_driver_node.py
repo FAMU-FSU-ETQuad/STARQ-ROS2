@@ -295,7 +295,10 @@ class MotorDriverNode(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    loop = asyncio.get_event_loop()
+    # Create a new event loop and set it as the default for the current context
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     motor_driver_node = loop.run_until_complete(MotorDriverNode.create())
 
     executor = SingleThreadedExecutor()
@@ -319,5 +322,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
-
