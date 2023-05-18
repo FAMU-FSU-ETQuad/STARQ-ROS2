@@ -247,7 +247,7 @@ class MotorDriverNode(Node):
         # Process each result
         for result in results:
             for reg, pub in reg_pub_map.items():
-                self.get_logger().info("PROCESSING: " + str(reg))
+                self.get_logger().info(str(reg) + ": " + result.values[reg])
                 pub_data_map[pub].data.append(result.values[reg])
 
         # Publish all messages
