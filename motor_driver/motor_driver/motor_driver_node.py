@@ -250,7 +250,6 @@ class MotorDriverNode(Node):
                 pub_data_map[pub].data.append(float(result.values[reg]))
 
         # Publish all messages
-        self.get_logger().info("PUBLISH")
         for pub, msg in pub_data_map.items():
             pub.publish(msg)
 
