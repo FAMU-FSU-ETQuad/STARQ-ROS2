@@ -244,6 +244,8 @@ class MotorDriverNode(Node):
         for pub, msg in pub_data_map.items():
             pub.publish(msg)
 
+        self.get_logger().info("Motor information published.")
+
 
 
     # Reset faults function
