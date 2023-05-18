@@ -30,6 +30,8 @@ class MotorDriverNode(Node):
 
         self.get_logger().info('Initializing motor driver node.')
 
+        self.loop = None
+
         # Declare ROS parameters
         self.declare_parameters(
             namespace='',
@@ -158,8 +160,11 @@ class MotorDriverNode(Node):
         self.get_logger().info('Motor Driver initialized.')
 
     @classmethod
-    async def create(cls):
+    async def create(cls, loop):
         self = MotorDriverNode()
+
+        # Save the asyncio event loop
+        self.loop = loop
 
         # asynchronous initialization
         await self.main()
@@ -209,9 +214,9 @@ class MotorDriverNode(Node):
         }
         await self.transport.cycle(commands)
 
-    # Publish motor information callback
+    # Modify the callback to use asyncio.run_coroutine_threadsafe
     def publish_info_callback(self):
-        asyncio.create_task(self.publish_info())
+        asyncio.run_coroutine_threadsafe(self.publish_info(), self.loop)
 
     async def publish_info(self):
         # Create a mapping of publisher to data array
@@ -299,7 +304,7 @@ def main(args=None):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    motor_driver_node = loop.run_until_complete(MotorDriverNode.create())
+    motor_driver_node = loop.run_until_complete(MotorDriverNode.create(loop))
 
     executor = SingleThreadedExecutor()
     executor.add_node(motor_driver_node)
