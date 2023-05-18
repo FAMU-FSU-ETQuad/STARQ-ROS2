@@ -244,7 +244,11 @@ class MotorDriverNode(Node):
         results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
         self.get_logger().info("Motor information recieved.")
 
-        print(results)
+        print(", ".join(
+            f"({result.arbitration_id} " +
+            f"{result.values[moteus.Register.POSITION]} " +
+            f"{result.values[moteus.Register.VELOCITY]})"
+            for result in results))
 
         # Process each result
         for result in results:
