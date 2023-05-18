@@ -250,6 +250,10 @@ class MotorDriverNode(Node):
             f"{result.values[moteus.Register.VELOCITY]})"
             for result in results))
 
+        pos = results[0].values[moteus.Register.POSITION]
+        posf = float(pos)
+        print("POSITION: " + str(posf))
+
         # Process each result
         for result in results:
             for reg, pub in reg_pub_map.items():
