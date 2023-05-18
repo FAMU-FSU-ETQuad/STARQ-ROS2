@@ -183,7 +183,11 @@ class MotorDriverNode(Node):
 
     # Set position command callback
     def set_position_callback(self, msg):
-        asyncio.create_task(self.set_position(msg))
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(self.set_position(msg))
+        else:
+            loop.run_until_complete(self.set_position(msg))
 
     async def set_position(self, msg):
         commands = {
@@ -197,7 +201,11 @@ class MotorDriverNode(Node):
 
     # Set velocity command callback
     def set_velocity_callback(self, msg):
-        asyncio.create_task(self.set_velocity(msg))
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(self.set_velocity(msg))
+        else:
+            loop.run_until_complete(self.set_velocity(msg))
 
     async def set_velocity(self, msg):
         commands = {
@@ -211,7 +219,12 @@ class MotorDriverNode(Node):
 
     # Publish motor information callback
     def publish_info_callback(self):
-        asyncio.create_task(self.publish_info())
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(self.publish_info())
+        else:
+            loop.run_until_complete(self.publish_info())
+
 
     async def publish_info(self):
         # Create a mapping of publisher to data array
