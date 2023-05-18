@@ -243,7 +243,8 @@ class MotorDriverNode(Node):
         # Query all servo states
         self.get_logger().info("Querying motor information.")
         results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
-        
+        self.get_logger().info("Querying successful.")
+
         # Process each result
         for result in results:
             for reg, pub in reg_pub_map.items():
