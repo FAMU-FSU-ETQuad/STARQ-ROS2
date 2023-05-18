@@ -169,6 +169,8 @@ class MotorDriverNode(Node):
         # Reset motor faults
         await self.reset_faults()
         self.get_logger().info('Reset Faults.')
+        await self.reset_gains()
+        self.get_logger().info('Reset Gains.')
         await self.set_gains(self.motor_kp, self.motor_ki, self.motor_kd)
         self.get_logger().info('Set Motor Gains.')
         await self.set_flux_brake(self.motor_flux_brake)
@@ -284,10 +286,6 @@ class MotorDriverNode(Node):
             servo.make_set_output_exact(position = self.zero_positions[idx])
             for idx, servo in self.servos.items()
         ])
-
-    async def destroy_node(self):
-        await self.reset_gains()
-        super().destroy_node()
 
 
 # ROS Entry
