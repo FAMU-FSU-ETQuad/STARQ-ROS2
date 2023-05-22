@@ -19,10 +19,10 @@ MOTOR_IDS = [9, 10]
 # There is only 1 value for each gain now since all motors are geared. I didn't delete the list yet because I'm not sure
 # Where else you use them
 #MOTOR_KP = [130, 130]
-MOTOR_KP = [130, 25]
+MOTOR_KP = [130.0, 25.0]
 MOTOR_KI = [0.0, 0.0]
 #MOTOR_KD = [3, 3]
-MOTOR_KD = [3, 0.15]
+MOTOR_KD = [3.0, 0.15]
 MOTOR_FLUX_BRAKE = [35.5, 35.5]
 ZERO_POSITIONS = [0.0, 0.5]
 
