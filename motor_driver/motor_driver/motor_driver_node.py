@@ -205,6 +205,8 @@ class MotorDriverNode(Node):
         asyncio.run_coroutine_threadsafe(self.cmd_send(), self.loop)
 
     async def cmd_send(self):
+        self.get_logger().info("POS: " + str(self.motor_positions))
+        self.get_logger().info("VEL: " + str(self.motor_velocities))
         commands = {
             servo.make_position( 
                 position=self.motor_positions[idx],
