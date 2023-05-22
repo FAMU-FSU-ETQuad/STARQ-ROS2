@@ -260,6 +260,14 @@ class MotorDriverNode(Node):
             pub.publish(msg)
         #self.get_logger().info("Motor information published.")
 
+        # Print modes and errors
+        for result in results:
+            motor_mode = int(result.values[moteus.Register.MODE])
+            self.get_logger().info("Mode: " + str(motor_mode))
+            if (motor_mode == 1):
+                motor_fault = int(result.values[moteus.Register.FAULT])
+                self.get_logger().info("Fault: " + str(motor_fault))
+
 
     # Reset faults function
     async def reset_faults(self):
