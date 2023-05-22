@@ -8,7 +8,7 @@ from std_srvs.srv import Empty
 
 import asyncio
 import moteus
-import moteus_pi3hat
+#import moteus_pi3hat
 import math
 import threading
 
@@ -18,9 +18,11 @@ MOTOR_IDS = [9, 10]
 # Dina's values
 # There is only 1 value for each gain now since all motors are geared. I didn't delete the list yet because I'm not sure
 # Where else you use them
-MOTOR_KP = [130, 130]
+#MOTOR_KP = [130, 130]
+MOTOR_KP = [130, 25]
 MOTOR_KI = [0.0, 0.0]
-MOTOR_KD = [3, 3] 
+#MOTOR_KD = [3, 3]
+MOTOR_KD = [3, 0.15]
 MOTOR_FLUX_BRAKE = [35.5, 35.5]
 ZERO_POSITIONS = [0.0, 0.5]
 
@@ -141,7 +143,8 @@ class MotorDriverNode(Node):
         # --- MOTORS ---
 
         # Use pi3hat for all communication
-        self.transport = moteus_pi3hat.Pi3HatRouter(mounting_deg = {'roll': 0, 'pitch': 90, 'yaw': 0}, servo_bus_map = {1:[1,2], 2:[3,4], 3:[5,6], 4:[7,8], 5:[32]}) # Creates a pi33=hat object to communicate through
+        #self.transport = moteus_pi3hat.Pi3HatRouter(mounting_deg = {'roll': 0, 'pitch': 90, 'yaw': 0}, servo_bus_map = {1:[1,2], 2:[3,4], 3:[5,6], 4:[7,8], 5:[32]}) # Creates a pi33=hat object to communicate through
+        self.transport = moteus.Fdcanusb()
 
         # Create motors with IDs
         self.servos = {
