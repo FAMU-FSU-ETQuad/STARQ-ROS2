@@ -224,7 +224,7 @@ class MotorDriverNode(Node):
 
     # Publish motor information callback
     def publish_info_callback(self):
-        self.get_logger().info("Publishing motor info.")
+        #self.get_logger().info("Publishing motor info.")
         asyncio.run_coroutine_threadsafe(self.publish_info(), self.loop)
 
     async def publish_info(self):
@@ -248,7 +248,7 @@ class MotorDriverNode(Node):
 
         # Query all servo states
         results = await self.transport.cycle(servo.make_query() for servo in self.servos.values())
-        self.get_logger().info("Motor information recieved.")
+        #self.get_logger().info("Motor information recieved.")
 
         # Process each result
         for result in results:
@@ -258,8 +258,7 @@ class MotorDriverNode(Node):
         # Publish all messages
         for pub, msg in pub_data_map.items():
             pub.publish(msg)
-
-        self.get_logger().info("Motor information published.")
+        #self.get_logger().info("Motor information published.")
 
 
     # Reset faults function
