@@ -259,6 +259,7 @@ class MotorDriverNode(Node):
         # Print modes and errors
         for result in results:
             motor_mode = int(result.values[moteus.Register.MODE])
+            self.get_logger().info("MODE: " + str(motor_mode))
             if (motor_mode == 11):
                 self.get_logger().info("TIMEOUT!")
 
