@@ -199,9 +199,12 @@ class MotorDriverNode(Node):
             self.motor_positions[idx] = msg.data[idx]
             self.motor_velocities[idx] = msg.data[self.num_motors + idx]
 
-    # Send motor commands
-    async def cmd_send_callback(self):
+    # Send motor commands callback
+    def cmd_send_callback(self):
         self.get_logger().info("Sending motor commands.")
+        asyncio.run_coroutine_threadsafe(self.cmd_send(), self.loop)
+
+    async def cmd_send(self):
         commands = {
             servo.make_position( 
                 position=self.motor_positions[idx],
