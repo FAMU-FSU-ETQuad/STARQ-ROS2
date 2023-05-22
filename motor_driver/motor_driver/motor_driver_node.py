@@ -26,6 +26,7 @@ MOTOR_KD = [3.0, 0.15]
 MOTOR_FLUX_BRAKE = [35.5, 35.5]
 ZERO_POSITIONS = [0.0, 0.5]
 
+MAX_TORQUE = 2.3
 REZERO_ON_START = True
 
 class MotorDriverNode(Node):
@@ -200,8 +201,9 @@ class MotorDriverNode(Node):
     async def set_position(self, msg):
         commands = {
             servo.make_position( 
-                position=msg.data[idx],
-                velocity=math.nan
+                position=float(msg.data[idx]),
+                velocity=math.nan,
+                maximum_torque=MAX_TORQUE
                 )
             for idx, servo in self.servos.items()
         }
@@ -216,7 +218,8 @@ class MotorDriverNode(Node):
         commands = {
             servo.make_position( 
                 position=math.nan,
-                velocity=msg.data[idx]
+                velocity=msg.data[idx],
+                maximum_torque=MAX_TORQUE
                 )
             for idx, servo in self.servos.items()
         }
