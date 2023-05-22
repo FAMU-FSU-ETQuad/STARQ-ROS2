@@ -133,7 +133,7 @@ class MotorDriverNode(Node):
         # --- TIMERS ---
 
         # Send motor commands
-        cmd_send_rate = 0.075 # seconds
+        cmd_send_rate = 0.05 # seconds
         self.cmd_timer = self.create_timer(cmd_send_rate, self.cmd_send_callback)
 
         # Sample motor information
@@ -214,6 +214,7 @@ class MotorDriverNode(Node):
             for idx, servo in self.servos.items()
         }
         await self.transport.cycle(commands)
+        self.get_logger().info("Commands finished.")
 
     # Publish motor information callback
     def publish_info_callback(self):
@@ -256,10 +257,8 @@ class MotorDriverNode(Node):
         # Print modes and errors
         for result in results:
             motor_mode = int(result.values[moteus.Register.MODE])
-            self.get_logger().info("Mode: " + str(motor_mode))
-            if (motor_mode == 1):
-                motor_fault = int(result.values[moteus.Register.FAULT])
-                self.get_logger().info("Fault: " + str(motor_fault))
+            if (motor_mode == 11):
+                self.get_logger().info("TIMEOUT!")
 
 
     # Reset faults function
