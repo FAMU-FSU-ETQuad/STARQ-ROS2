@@ -37,6 +37,9 @@ class MotorDriverNode(Node):
         self.get_logger().info('Initializing motor driver node.')
 
         self.loop = None
+        self.num_motors = len(MOTOR_IDS)
+        self.motor_positions = [math.nan] * self.num_motors
+        self.motor_velocities = [math.nan] * self.num_motors
 
         # Declare ROS parameters
         self.declare_parameters(
@@ -68,18 +71,10 @@ class MotorDriverNode(Node):
         # --- SUBSCRIBERS ---
 
         # Position command subscriber
-        self.cmd_pos_sub = self.create_subscription(
+        self.cmd_motor_sub = self.create_subscription(
             Float32MultiArray,
-            '/starq/motors/cmd/position',
-            self.set_position_callback,
-            10
-        )
-
-        # Velocity command subscriber
-        self.cmd_vel_sub = self.create_subscription(
-            Float32MultiArray,
-            '/starq/motors/cmd/velocity',
-            self.set_velocity_callback,
+            '/starq/motors/cmd',
+            self.cmd_motor_callback,
             10
         )
 
@@ -137,6 +132,10 @@ class MotorDriverNode(Node):
 
         # --- TIMERS ---
 
+        # Send motor commands
+        cmd_send_rate = 0.075 # seconds
+        self.cmd_timer = self.create_timer(cmd_send_rate, self.cmd_send_callback)
+
         # Sample motor information
         info_sample_rate = 0.1 # seconds
         self.info_timer = self.create_timer(info_sample_rate, self.publish_info_callback)
@@ -193,32 +192,20 @@ class MotorDriverNode(Node):
 
         self.get_logger().info('Motors initialized.')
 
-    # Set position command callback
-    def set_position_callback(self, msg):
-        self.get_logger().info("Setting motor position.")
-        asyncio.run_coroutine_threadsafe(self.set_position(msg), self.loop)
+    # Set motor commands callback
+    def cmd_motor_callback(self, msg):
+        self.get_logger().info("Setting motor positions.")
+        for idx in range(self.num_motors):
+            self.motor_positions[idx] = msg.data[idx]
+            self.motor_velocities[idx] = msg.data[self.num_motors + idx]
 
-    async def set_position(self, msg):
+    # Send motor commands
+    async def cmd_send_callback(self):
+        self.get_logger().info("Sending motor commands.")
         commands = {
             servo.make_position( 
-                position=float(msg.data[idx]),
-                velocity=math.nan,
-                maximum_torque=MAX_TORQUE
-                )
-            for idx, servo in self.servos.items()
-        }
-        await self.transport.cycle(commands)
-
-    # Set velocity command callback
-    def set_velocity_callback(self, msg):
-        self.get_logger().info("Setting motor velocity.")
-        asyncio.run_coroutine_threadsafe(self.set_velocity(msg), self.loop)
-
-    async def set_velocity(self, msg):
-        commands = {
-            servo.make_position( 
-                position=math.nan,
-                velocity=msg.data[idx],
+                position=self.motor_positions[idx],
+                velocity=self.motor_velocities[idx],
                 maximum_torque=MAX_TORQUE
                 )
             for idx, servo in self.servos.items()
