@@ -31,6 +31,9 @@ class MoteusDriver:
 
         # Motor feedback
         self.feedback = None
+
+        # Mutex lock
+        self.thread_lock = threading.Lock()
         
     # Start the main function in a thread
     def start(self):
@@ -69,7 +72,8 @@ class MoteusDriver:
                 )
             for motor in self.motors.values()
         }
-        self.feedback = await self.transport.cycle(commands)
+        with self.thread_lock:
+            self.feedback = await self.transport.cycle(commands)
 
     # Reset motor faults
     async def reset_faults(self):
@@ -95,48 +99,57 @@ class MoteusDriver:
             motor.max_torque = max_torque[idx]
 
     def set_positions(self, positions):
-        for idx, motor in self.motors.items():
-            motor.position = positions[idx]
+        with self.thread_lock:
+            for idx, motor in self.motors.items():
+                motor.position = positions[idx]
 
     def set_velocities(self, velocities):
-        for idx, motor in self.motors.items():
-            motor.velocity = velocities[idx]
+        with self.thread_lock:
+            for idx, motor in self.motors.items():
+                motor.velocity = velocities[idx]
 
     ## GETTERS ##
     def get_motors(self):
         return self.motors
 
     def get_motor_positions(self):
-        if self.feedback == None:
-            return []
-        return [float(state.values[moteus.Register.POSITION]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [float(state.values[moteus.Register.POSITION]) for state in self.feedback]
     
     def get_motor_velocities(self):
-        if self.feedback == None:
-            return []
-        return [float(state.values[moteus.Register.VELOCITY]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [float(state.values[moteus.Register.VELOCITY]) for state in self.feedback]
     
     def get_motor_torques(self):
-        if self.feedback == None:
-            return []
-        return [float(state.values[moteus.Register.TORQUE]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [float(state.values[moteus.Register.TORQUE]) for state in self.feedback]
     
     def get_motor_temperatures(self):
-        if self.feedback == None:
-            return []
-        return [float(state.values[moteus.Register.TEMPERATURE]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [float(state.values[moteus.Register.TEMPERATURE]) for state in self.feedback]
     
     def get_motor_qcurrents(self):
-        if self.feedback == None:
-            return []
-        return [float(state.values[moteus.Register.Q_CURRENT]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [float(state.values[moteus.Register.Q_CURRENT]) for state in self.feedback]
     
     def get_motor_modes(self):
-        if self.feedback == None:
-            return []
-        return [int(state.values[moteus.Register.MODE]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [int(state.values[moteus.Register.MODE]) for state in self.feedback]
     
     def get_motor_faults(self):
-        if self.feedback == None:
-            return []
-        return [int(state.values[moteus.Register.FAULT]) for state in self.feedback]
+        with self.thread_lock:
+            if self.feedback == None:
+                return []
+            return [int(state.values[moteus.Register.FAULT]) for state in self.feedback]
