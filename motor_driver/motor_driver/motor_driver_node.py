@@ -30,7 +30,6 @@ class MotorDriverNode(Node):
         self.info_velocity_pub = self.create_publisher(Float32MultiArray, '/motors/info/velocity', 10)
         self.info_torque_pub = self.create_publisher(Float32MultiArray, '/motors/info/torque', 10)
         self.info_temperature_pub = self.create_publisher(Float32MultiArray, '/motors/info/temperature', 10)
-        self.info_qcurrent_pub = self.create_publisher(Float32MultiArray, '/motors/info/qcurrent', 10)
         self.info_mode_pub = self.create_publisher(Int32MultiArray, '/motors/info/mode', 10)
         self.info_fault_pub = self.create_publisher(Int32MultiArray, '/motors/info/fault', 10)
 
@@ -51,16 +50,21 @@ class MotorDriverNode(Node):
         self.info_velocity_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_velocities()))
         self.info_torque_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_torques()))
         self.info_temperature_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_temperatures()))
-        #self.info_qcurrent_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_qcurrents()))
         self.info_mode_pub.publish(Int32MultiArray(data=self.moteus_driver.get_motor_modes()))
         self.info_fault_pub.publish(Int32MultiArray(data=self.moteus_driver.get_motor_faults()))
         self.get_logger().info("Motor info published.")
 
+    def close(self):
+        self.moteus_driver.close()
+
 # ROS Entry
 def main(args=None):
-    rclpy.init(args=args)
-    motor_driver_node = MotorDriverNode()
-    rclpy.spin(motor_driver_node)
+    try:
+        rclpy.init(args=args)
+        motor_driver_node = MotorDriverNode()
+        rclpy.spin(motor_driver_node)
+    except KeyboardInterrupt:
+        motor_driver_node.close()
     motor_driver_node.destroy_node()
     rclpy.shutdown()
 

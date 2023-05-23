@@ -34,11 +34,19 @@ class MoteusDriver:
 
         # Mutex lock
         self.thread_lock = threading.Lock()
+
+        # End check
+        self.done = False
         
     # Start the main function in a thread
     def start(self):
         self.thread = threading.Thread(target=asyncio.run, args=(self.main(),))
         self.thread.start()
+
+    # End the main function thread
+    def close(self):
+        self.done = True
+        self.thread.join()
 
     # Main function
     async def main(self):
@@ -57,7 +65,7 @@ class MoteusDriver:
             await self.set_as_zero()
 
         # Motor loop
-        while True:
+        while not self.done:
             await self.command_motor()
             await asyncio.sleep(1 / self.update_rate)
 
@@ -135,12 +143,6 @@ class MoteusDriver:
             if self.feedback == None:
                 return []
             return [float(state.values[moteus.Register.TEMPERATURE]) for state in self.feedback]
-    
-    def get_motor_qcurrents(self):
-        with self.thread_lock:
-            if self.feedback == None:
-                return []
-            return [float(state.values[moteus.Register.Q_CURRENT]) for state in self.feedback]
     
     def get_motor_modes(self):
         with self.thread_lock:
