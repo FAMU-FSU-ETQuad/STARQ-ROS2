@@ -40,8 +40,10 @@ class MotorDriverNode(Node):
 
     # Set motor state
     def motors_cmd_callback(self, msg : JointTrajectoryPoint):
-        self.moteus_driver.set_positions(msg.positions)
-        self.moteus_driver.set_velocities(msg.velocities)
+        if len(msg.positions) != 0:
+            self.moteus_driver.set_positions(msg.positions)
+        if len(msg.velocities) != 0:
+            self.moteus_driver.set_velocities(msg.velocities)
         self.get_logger().info("Motor state updated.")
 
     # Publish motor info
