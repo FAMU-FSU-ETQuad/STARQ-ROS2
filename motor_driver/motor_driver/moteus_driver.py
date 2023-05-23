@@ -15,8 +15,8 @@ class MoteusMotor:
     max_torque: float = 2.5
     position: float = math.nan
     velocity: float = math.nan
-    controller: moteus.Controller = moteus.Controller(motor_id)
-    stream: moteus.Stream = moteus.Stream(controller)
+    controller: moteus.Controller = None
+    stream: moteus.Stream = None
 
 class MoteusDriver:
 
@@ -35,9 +35,10 @@ class MoteusDriver:
         # Transport
         self.transport = moteus.Fdcanusb()
 
-        # Update transport
+        # Create controllers and streams
         for motor in self.motors.values():
-            motor.controller.transport = self.transport
+            motor.controller = moteus.Controller(motor.motor_id, transport=self.transport)
+            motor.stream = moteus.Stream(motor.controller)
         
     # Start the update loop in a thread
     def start(self):
