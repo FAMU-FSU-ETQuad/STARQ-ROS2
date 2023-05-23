@@ -84,6 +84,7 @@ class MoteusDriver:
         }
         with self.thread_lock:
             self.feedback = await self.transport.cycle(commands)
+        print("Motor commands sent.")
 
     # Reset motor faults
     async def reset_faults(self):
