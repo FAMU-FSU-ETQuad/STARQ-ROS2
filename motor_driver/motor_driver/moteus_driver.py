@@ -107,22 +107,36 @@ class MoteusDriver:
         return self.motors
 
     def get_motor_positions(self):
+        if self.feedback == None:
+            return []
         return [float(state.values[moteus.Register.POSITION]) for state in self.feedback]
     
     def get_motor_velocities(self):
+        if self.feedback == None:
+            return []
         return [float(state.values[moteus.Register.VELOCITY]) for state in self.feedback]
     
     def get_motor_torques(self):
+        if self.feedback == None:
+            return []
         return [float(state.values[moteus.Register.TORQUE]) for state in self.feedback]
     
     def get_motor_temperatures(self):
+        if self.feedback == None:
+            return []
         return [float(state.values[moteus.Register.TEMPERATURE]) for state in self.feedback]
     
     def get_motor_qcurrents(self):
+        if self.feedback == None:
+            return []
         return [float(state.values[moteus.Register.Q_CURRENT]) for state in self.feedback]
     
     def get_motor_modes(self):
+        if self.feedback == None:
+            return []
         return [int(state.values[moteus.Register.MODE]) for state in self.feedback]
     
     def get_motor_faults(self):
+        if self.feedback == None:
+            return []
         return [int(state.values[moteus.Register.FAULT]) for state in self.feedback]
