@@ -23,7 +23,7 @@ class MoteusDriver:
     def __init__(self, motor_ids):
 
         # Default Params
-        self.update_rate = 20 # Hz
+        self.update_rate = 20.0 # Hz
         self.zero_on_start = True
 
         # Motor map

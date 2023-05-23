@@ -7,7 +7,7 @@ from std_msgs.msg import Int32MultiArray
 
 from motor_driver.moteus_driver import MoteusDriver
 
-PUBLISH_INFO_RATE = 20 # Hz
+PUBLISH_INFO_RATE = 20.0 # Hz
 
 class MotorDriverNode(Node):
     
@@ -34,7 +34,7 @@ class MotorDriverNode(Node):
         self.info_fault_pub = self.create_publisher(Int32MultiArray, '/motors/info/fault', 10)
 
         # Timers
-        self.info_publish_timer = self.create_timer(1/PUBLISH_INFO_RATE, self.publish_info)
+        self.info_publish_timer = self.create_timer(1.0/PUBLISH_INFO_RATE, self.publish_info)
 
         self.get_logger().info("Motor driver node initialized.")
 
