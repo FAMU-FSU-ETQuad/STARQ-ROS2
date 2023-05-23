@@ -54,3 +54,14 @@ class MotorDriverNode(Node):
         self.info_qcurrent_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_qcurrents()))
         self.info_mode_pub.publish(Int32MultiArray(data=self.moteus_driver.get_motor_modes()))
         self.info_fault_pub.publish(Int32MultiArray(data=self.moteus_driver.get_motor_faults()))
+
+# ROS Entry
+def main(args=None):
+    rclpy.init(args=args)
+    motor_driver_node = MotorDriverNode()
+    rclpy.spin(motor_driver_node)
+    motor_driver_node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
