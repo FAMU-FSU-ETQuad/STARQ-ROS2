@@ -30,7 +30,7 @@ class MoteusDriver:
         self.motors = {idx: MoteusMotor(motor_ids[idx]) for idx in range(len(motor_ids))}
 
         # Motor feedback
-        self.feedback = [None] * len(motor_ids)
+        self.feedback = None
         
     # Start the main function in a thread
     def start(self):
@@ -55,7 +55,7 @@ class MoteusDriver:
 
         # Motor loop
         while True:
-            self.command_motor()
+            await self.command_motor()
             await asyncio.sleep(1 / self.update_rate)
 
     # Command the motors to go to their current set state
