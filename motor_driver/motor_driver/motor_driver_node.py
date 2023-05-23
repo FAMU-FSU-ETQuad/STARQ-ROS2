@@ -56,6 +56,7 @@ class MotorDriverNode(Node):
 
     def close(self):
         self.moteus_driver.close()
+        self.get_logger().info("Motor driver node closed.")
 
 # ROS Entry
 def main(args=None):
@@ -65,8 +66,9 @@ def main(args=None):
         rclpy.spin(motor_driver_node)
     except KeyboardInterrupt:
         motor_driver_node.close()
-    motor_driver_node.destroy_node()
-    rclpy.shutdown()
+    finally:
+        motor_driver_node.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
