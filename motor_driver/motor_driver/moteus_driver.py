@@ -73,7 +73,7 @@ class MoteusDriver:
     async def command_motor(self):
         print("Commanding pos to: " + str(self.motors[0].position))
         print("Commanding vel to: " + str(self.motors[0].velocity))
-        if self.motors[0].position == math.nan:
+        if math.isnan(self.motors[0].position):
             print("NAN = NAN")
         commands = {
             motor.controller.make_position( 
