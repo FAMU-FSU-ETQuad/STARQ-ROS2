@@ -51,9 +51,10 @@ class MotorDriverNode(Node):
         self.info_velocity_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_velocities()))
         self.info_torque_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_torques()))
         self.info_temperature_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_temperatures()))
-        self.info_qcurrent_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_qcurrents()))
+        #self.info_qcurrent_pub.publish(Float32MultiArray(data=self.moteus_driver.get_motor_qcurrents()))
         self.info_mode_pub.publish(Int32MultiArray(data=self.moteus_driver.get_motor_modes()))
         self.info_fault_pub.publish(Int32MultiArray(data=self.moteus_driver.get_motor_faults()))
+        self.get_logger().info("Motor info published.")
 
 # ROS Entry
 def main(args=None):
