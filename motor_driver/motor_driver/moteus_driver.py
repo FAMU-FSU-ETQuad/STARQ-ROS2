@@ -31,6 +31,14 @@ class MoteusDriver:
 
         # Motor feedback
         self.feedback = [None] * len(motor_ids)
+        
+    # Start the main function in a thread
+    def start(self):
+        self.thread = threading.Thread(target=asyncio.run, args=(self.main(),))
+        self.thread.start()
+
+    # Main function
+    async def main(self):
 
         # Transport
         self.transport = moteus.Fdcanusb()
@@ -39,14 +47,6 @@ class MoteusDriver:
         for motor in self.motors.values():
             motor.controller = moteus.Controller(motor.motor_id, transport=self.transport)
             motor.stream = moteus.Stream(motor.controller)
-        
-    # Start the update loop in a thread
-    def start(self):
-        self.thread = threading.Thread(target=asyncio.run, args=(self.main(),))
-        self.thread.start()
-
-    # Update loop
-    async def main(self):
 
         # Reset motors
         await self.reset_faults()
