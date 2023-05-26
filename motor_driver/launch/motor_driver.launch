@@ -1,6 +1,0 @@
-<launch>
-    <arg name="config_file" default="$(find motor_driver)/config/motors.yaml"/>
-    <node pkg="motor_driver" exec="motor_driver_node" output="screen">
-        <rosparam command="load" file="$(arg config_file)"/>
-    </node>
-</launch>
