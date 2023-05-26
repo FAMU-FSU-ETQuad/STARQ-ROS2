@@ -28,7 +28,7 @@ class MotorDriverNode(Node):
         self.declare_parameter('motors')
         self.motors : Dict[int, ODriveMotor]
         self.motor_count = 0
-        for motor_name, details in self.get_parameter('motors').value.items():
+        for motor_name, details in self.get_parameter('motors').get_parameter_value().string_value.items():
 
             motor_id = int(details['id'])
             motor_sn = str(details['serial_number'])
@@ -48,7 +48,7 @@ class MotorDriverNode(Node):
 
         # Set control mode
         self.declare_parameter('control_mode')
-        self.control_mode = ControlMode(self.get_parameter('control_mode').value)
+        self.control_mode = ControlMode(self.get_parameter('control_mode').get_parameter_value().integer_value)
         for motor in self.motors.values():
             motor.controller.axis0.controller.config.control_mode = self.control_mode
 
