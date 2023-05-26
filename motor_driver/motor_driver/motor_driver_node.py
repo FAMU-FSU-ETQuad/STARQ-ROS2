@@ -27,23 +27,15 @@ class MotorDriverNode(Node):
 
         self.get_logger().info("Starting motor driver node.")
 
-        self.declare_parameters(
-            namespace='motor_driver',
-            parameters=[
-                ('motors', None),
-                ('control_mode', None)
-            ])
-
-        # Check the declared parameters:
-        param_names = self.get_parameters()
-        for name in param_names:
-            self.get_logger().info(f"Declared parameter: {name}")
-
-        self.get_logger().info("Initializing motors...")
-
         # Initialize motors from config
-        motors_dict = self.get_parameter('motor_driver.motors').value
-        self.get_logger().info("Motors: " + str(motors_dict))
+        motors_dict = {
+            'left_1': {
+                'id': 0,
+                'serial_number': "56453979189808"
+            }
+        }
+        
+
         self.motors : Dict[int, ODriveMotor]
         self.motor_count = 0
         for motor_name, details in motors_dict.items():
@@ -64,7 +56,7 @@ class MotorDriverNode(Node):
             self.motor_count += 1
 
         # Set control mode
-        self.control_mode = ControlMode(self.get_parameter('motor_driver.control_mode').get_parameter_value().integer_value)
+        self.control_mode = ControlMode.POSITION_CONTROL
         for motor in self.motors.values():
             motor.controller.axis0.controller.config.control_mode = self.control_mode
 
