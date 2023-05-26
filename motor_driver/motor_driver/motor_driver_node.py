@@ -36,7 +36,7 @@ class MotorDriverNode(Node):
         }
         
         self.get_logger().info("Initializing motors...")
-        self.motors : Dict[int, ODriveMotor]
+        self.motors : Dict[int, ODriveMotor] = {}
         self.motor_count = 0
         for motor_name, details in motors_dict.items():
             self.get_logger().info(f"{motor_name} , {details}")
