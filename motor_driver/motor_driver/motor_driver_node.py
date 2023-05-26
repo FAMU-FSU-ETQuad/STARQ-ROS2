@@ -1,5 +1,6 @@
 import math
 import time
+import ast
 from typing import Dict
 from typing import Any
 from dataclasses import dataclass
@@ -24,12 +25,19 @@ class MotorDriverNode(Node):
     def __init__(self):
         super().__init__('motor_driver_node')
 
+        self.declare_parameters(
+            namespace='motor_driver',
+            parameters=[
+                ('motors', None),
+                ('control_mode', None)
+            ])
+
         # Initialize motors from config
-        self.declare_parameter('motors')
+        motors_dict = self.get_parameter('motors').value
+        print(motors_dict)
         self.motors : Dict[int, ODriveMotor]
         self.motor_count = 0
-        for motor_name, details in self.get_parameter('motors').get_parameter_value().string_value.items():
-
+        for motor_name, details in motors_dict.items():
             motor_id = int(details['id'])
             motor_sn = str(details['serial_number'])
             motor_ctrl = None
@@ -47,7 +55,6 @@ class MotorDriverNode(Node):
             self.motor_count += 1
 
         # Set control mode
-        self.declare_parameter('control_mode')
         self.control_mode = ControlMode(self.get_parameter('control_mode').get_parameter_value().integer_value)
         for motor in self.motors.values():
             motor.controller.axis0.controller.config.control_mode = self.control_mode

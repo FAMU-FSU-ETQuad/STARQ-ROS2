@@ -1,11 +1,13 @@
 # Motor configuration
-motors:
-  left_1:
-      id: 0
-      serial_number: "56453979189808"
+motor_driver:
+  ros__parameters:
+    motors:
+      left_1:
+          id: 0
+          serial_number: "56453979189808"
 
-# Control mode
-# 1: Torque Control
-# 2: Velocity Control
-# 3: Position Control
-control_mode: 3
+    # Control mode
+    # 1: Torque Control
+    # 2: Velocity Control
+    # 3: Position Control
+    control_mode: 3
