@@ -102,14 +102,16 @@ class MotorDriverNode(Node):
 
 # ROS Entry
 def main(args=None):
+    motor_driver_node = None
     try:
         rclpy.init(args=args)
         motor_driver_node = MotorDriverNode()
         rclpy.spin(motor_driver_node)
     except Exception:
-        motor_driver_node.close()
-        motor_driver_node.destroy_node()
-        rclpy.shutdown()
+        if motor_driver_node is not None:
+            motor_driver_node.close()
+            motor_driver_node.destroy_node()
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
