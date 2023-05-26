@@ -88,11 +88,11 @@ class MotorDriverNode(Node):
         # Send position command to ODrive
         for idx, motor in self.motors.items():
             if len(msg.positions) == self.motor_count:
-                motor.axis0.controller.input_pos = msg.positions[idx]
+                motor.controller.axis0.controller.input_pos = msg.positions[idx]
             if len(msg.velocities) == self.motor_count:
-                motor.axis0.controller.input_vel = msg.velocities[idx]
+                motor.controller.axis0.controller.input_vel = msg.velocities[idx]
             if len(msg.effort) == self.motor_count:
-                motor.axis0.controller.input_torque = msg.effort[idx]
+                motor.controller.axis0.controller.input_torque = msg.effort[idx]
 
         self.get_logger().info(f"Sent motor command to {motor.name}")
 
