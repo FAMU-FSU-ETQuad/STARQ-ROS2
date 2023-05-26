@@ -94,7 +94,7 @@ for p in range(6):
 print("Testing velocity control:")
 odrv0.axis0.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
 for v in range(6):
-	goto_vel = p*2
+	goto_vel = v*2
 	odrv0.axis0.controller.input_vel = goto_vel
 	print(f" Setting velocity to {goto_pos}")
 	time.sleep(0.5)

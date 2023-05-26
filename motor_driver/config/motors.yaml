@@ -2,7 +2,7 @@
 motors:
   left_1:
       id: 0
-      serial_number: "1234567890"
+      serial_number: "56453979189808"
 
 # Control mode
 # 1: Torque Control
