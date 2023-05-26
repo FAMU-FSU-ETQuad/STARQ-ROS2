@@ -25,12 +25,16 @@ class MotorDriverNode(Node):
     def __init__(self):
         super().__init__('motor_driver_node')
 
+        self.get_logger().info("Starting motor driver node.")
+
         self.declare_parameters(
             namespace='motor_driver',
             parameters=[
                 ('motors', None),
                 ('control_mode', None)
             ])
+
+        self.get_logger().info("Initializing motors...")
 
         # Initialize motors from config
         motors_dict = self.get_parameter('motors').value
