@@ -120,10 +120,12 @@ def main(args=None):
         rclpy.spin(motor_driver_node)
     except Exception as e:
         print(e)
-        if motor_driver_node is not None:
-            motor_driver_node.close()
-            motor_driver_node.destroy_node()
-            rclpy.shutdown()
+    except KeyboardInterrupt:
+        pass
+    if motor_driver_node is not None:
+        motor_driver_node.close()
+    motor_driver_node.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
