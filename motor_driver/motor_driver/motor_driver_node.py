@@ -37,7 +37,7 @@ class MotorDriverNode(Node):
         self.get_logger().info("Initializing motors...")
 
         # Initialize motors from config
-        motors_dict = self.get_parameter('motors').value
+        motors_dict = self.get_parameter('/motor_driver/motors').value
         self.get_logger().info("Motors: " + str(motors_dict))
         self.motors : Dict[int, ODriveMotor]
         self.motor_count = 0
