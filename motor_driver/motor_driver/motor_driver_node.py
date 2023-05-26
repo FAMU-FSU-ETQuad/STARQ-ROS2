@@ -32,6 +32,10 @@ class MotorDriverNode(Node):
             'left_1': {
                 'id': 0,
                 'serial_number': "335837603230"
+            },
+            'right_1': {
+                'id': 1,
+                'serial_number': "3355375E3230"
             }
         }
         
