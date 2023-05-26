@@ -45,7 +45,7 @@ class MotorDriverNode(Node):
             motor_ctrl = None
             while motor_ctrl is None:
                 self.get_logger().info(f"Searching for {motor_name}")
-                motor_ctrl = odrive.find_any(serial_number=motor_sn, timeout=1.0)
+                motor_ctrl = odrive.find_any(serial_number=motor_sn)
                 if motor_ctrl is None:
                     self.get_logger().warn(f"Couldn't connect to motor {motor_name}. Trying again...")
                     time.sleep(1.0)
