@@ -27,17 +27,17 @@ class MotorDriverNode(Node):
 
         self.get_logger().info("Starting motor driver node.")
 
-        parameters_and_prefixes = self.list_parameters(
-            prefixes=['motor_driver'], depth=2)
-        for parameter_and_prefix in parameters_and_prefixes:
-            print(parameter_and_prefix)
-
         self.declare_parameters(
             namespace='motor_driver',
             parameters=[
                 ('motors', None),
                 ('control_mode', None)
             ])
+
+        # Check the declared parameters:
+        param_names = self.get_parameters()
+        for name in param_names:
+            self.get_logger().info(f"Declared parameter: {name}")
 
         self.get_logger().info("Initializing motors...")
 
