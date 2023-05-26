@@ -37,7 +37,7 @@ class MotorDriverNode(Node):
         self.get_logger().info("Initializing motors...")
 
         # Initialize motors from config
-        motors_dict = self.get_parameter('/motor_driver/motors').value
+        motors_dict = self.get_parameter('motor_driver.motors').value
         self.get_logger().info("Motors: " + str(motors_dict))
         self.motors : Dict[int, ODriveMotor]
         self.motor_count = 0
@@ -59,7 +59,7 @@ class MotorDriverNode(Node):
             self.motor_count += 1
 
         # Set control mode
-        self.control_mode = ControlMode(self.get_parameter('control_mode').get_parameter_value().integer_value)
+        self.control_mode = ControlMode(self.get_parameter('motor_driver.control_mode').get_parameter_value().integer_value)
         for motor in self.motors.values():
             motor.controller.axis0.controller.config.control_mode = self.control_mode
 
