@@ -31,7 +31,7 @@ class MotorDriverNode(Node):
         motors_dict = {
             'left_1': {
                 'id': 0,
-                'serial_number': "56453979189808"
+                'serial_number': "335837603230"
             }
         }
         
@@ -45,7 +45,7 @@ class MotorDriverNode(Node):
             motor_ctrl = None
             while motor_ctrl is None:
                 self.get_logger().info(f"Searching for {motor_name}")
-                motor_ctrl = odrive.find_any() #serial_number=motor_sn)
+                motor_ctrl = odrive.find_any(serial_number=motor_sn)
                 if motor_ctrl is None:
                     self.get_logger().warn(f"Couldn't connect to motor {motor_name}. Trying again...")
                     time.sleep(1.0)
