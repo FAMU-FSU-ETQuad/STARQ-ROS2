@@ -28,7 +28,7 @@ class MotorDriverNode(Node):
         self.get_logger().info("Starting motor driver node.")
 
         self.declare_parameters(
-            namespace='',
+            namespace='motor_driver',
             parameters=[
                 ('motors', None),
                 ('control_mode', None)
