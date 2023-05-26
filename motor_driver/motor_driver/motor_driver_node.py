@@ -38,7 +38,7 @@ class MotorDriverNode(Node):
 
         # Initialize motors from config
         motors_dict = self.get_parameter('motors').value
-        self.get_logger().info(str(motors_dict))
+        self.get_logger().info("Motors: " + str(motors_dict))
         self.motors : Dict[int, ODriveMotor]
         self.motor_count = 0
         for motor_name, details in motors_dict.items():
@@ -118,7 +118,8 @@ def main(args=None):
         rclpy.init(args=args)
         motor_driver_node = MotorDriverNode()
         rclpy.spin(motor_driver_node)
-    except Exception:
+    except Exception as e:
+        print(e)
         if motor_driver_node is not None:
             motor_driver_node.close()
             motor_driver_node.destroy_node()
