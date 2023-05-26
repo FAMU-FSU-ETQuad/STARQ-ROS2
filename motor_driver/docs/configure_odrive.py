@@ -86,14 +86,14 @@ print(" Current motor velocity = " + str(odrv0.axis0.pos_vel_mapper.vel))
 print("Testing position control:")
 odrv0.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 ordv0.axis0.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
-for p in range(6)
+for p in range(6):
 	goto_pos = p*0.20
 	odrv0.axis0.controller.input_pos = goto_pos
 	print(f" Setting position to {goto_pos}")
 	time.sleep(0.5)
 print("Testing velocity control:")
 ordv0.axis0.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
-for v in range(6)
+for v in range(6):
 	goto_vel = p*2
 	odrv0.axis0.controller.input_vel = goto_vel
 	print(f" Setting velocity to {goto_pos}")
