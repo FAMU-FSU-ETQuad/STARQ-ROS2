@@ -111,6 +111,9 @@ class MotorDriverNode(Node):
         info_msg = JointTrajectoryPoint()
         for motor in self.motors:
             encoder_data = canfunc.get_encoder(motor.id)
+            if encoder_data is None:
+                self.get_logger().error("Could not read encoder data!")
+                return
             info_msg.positions.insert(motor.id, float(encoder_data['Position']))
             info_msg.velocities.insert(motor.id, float(encoder_data['Velocity']))
         self.info_pub.publish(info_msg)
