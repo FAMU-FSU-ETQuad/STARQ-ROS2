@@ -10,7 +10,7 @@ print("Starting ODrive configuration.")
 
 print("Finding ODrive connection...")
 odrv0 = odrive.find_any()
-print("Found ODrive with Serial #: " + str(odrv0.serial_number))
+#print("Found ODrive with Serial #: " + str(odrv0.serial_number))
 
 print("Erasing current configuration...")
 try:
@@ -96,7 +96,7 @@ odrv0.axis0.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
 for v in range(6):
 	goto_vel = v*2
 	odrv0.axis0.controller.input_vel = goto_vel
-	print(f" Setting velocity to {goto_pos}")
+	print(f" Setting velocity to {goto_vel}")
 	time.sleep(0.5)
 
 odrv0.axis0.requested_state = AXIS_STATE_IDLE

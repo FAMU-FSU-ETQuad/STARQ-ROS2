@@ -12,7 +12,7 @@ setup(
             [os.path.join('resource', 'ament_python')]),
         ('share/' + package_name, ['package.xml']),
         # Add this line for your launch file
-        (os.path.join('share', package_name, 'launch'), ['launch/motor_driver.launch.py']),
+        (os.path.join('share', package_name, 'launch'), ['launch/motor_driver.xml']),
         (os.path.join('share', package_name, 'config'), ['config/motors.yaml']),
     ],
     install_requires=['setuptools'],

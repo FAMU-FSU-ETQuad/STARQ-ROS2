@@ -2,19 +2,17 @@
 
 Instructions on how to configure the ODrive Pro motor controllers with Moteus's MJ5208 brushless motors. 
 
-## **Procedure**
+## **Manual Configuration**
 
 ### A. Startup
 
 1. Power the ODrive controller and connect it to your computer via USB
 
-2. Open `odrivetool` in Terminal
+2. Enter `odrivetool` in Terminal
 
-3. Verify connection. Should say `Connected to ODrive Pro --- as odrv0`
+3. Write down the serial number from `Connected to ODrive Pro <serial number> as odrv0` \
 
-### B. Power Supply Configuration
-
-*Assumes that the motor is connected to a wall plug rated for 24V, 5A*
+### B. Power Supply Configuration*
 
 The following instruction can be typed into the Terminal after `In [#]:`
 

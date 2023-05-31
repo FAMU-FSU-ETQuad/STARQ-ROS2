@@ -24,7 +24,6 @@ private:
 
     int frequency_;
     
-
 };
 
 }

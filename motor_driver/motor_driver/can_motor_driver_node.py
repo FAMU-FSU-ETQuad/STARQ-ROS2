@@ -1,26 +1,25 @@
 import os
-import time
 import yaml
 from typing import Dict
 from typing import Any
 from dataclasses import dataclass
 
 # ODrive imports
-import odrive
 from odrive.enums import ControlMode, AxisState
 
 # ROS imports
 import rclpy
 from rclpy.node import Node
-from rcl_interfaces.msg import ParameterDescriptor
 from trajectory_msgs.msg import JointTrajectoryPoint
 from ament_index_python.packages import get_package_share_directory
+
+import motor_driver.can_functions as canfunc
 
 @dataclass
 class ODriveMotor():
     name : str
+    id : int
     serial_number : str
-    controller : Any 
     control_mode : int
 
 class MotorDriverNode(Node):
@@ -41,8 +40,8 @@ class MotorDriverNode(Node):
             raise Exception
         
         # Read motors from config
-        self.get_logger().info("Connecting motors...")
-        self.motors : Dict[int, ODriveMotor] = {}
+        self.get_logger().info("Creating motors...")
+        self.motors : list[ODriveMotor] = []
         self.motor_count = 0
         for motor_name, details in motors_dict.items():
 
@@ -50,28 +49,21 @@ class MotorDriverNode(Node):
             motor_sn = str(details['serial_number'])
             motor_mode = int(details['control_mode'])
 
-            # Connect to motor
-            self.get_logger().info(f"Searching for {motor_name} [SN: {motor_sn}] (ID: {motor_id}) ")
-            motor_ctrl = odrive.find_any(serial_number=motor_sn)
-            self.get_logger().info(f"Connected.")
-
             # Add to index map
-            self.motors[motor_id] = ODriveMotor(
+            self.motors.append(ODriveMotor(
                 name=motor_name,
+                id=motor_id,
                 serial_number=motor_sn,
-                controller=motor_ctrl,
                 control_mode=motor_mode
-            )
+            ))
             self.motor_count += 1
 
         # Initialize motors
         self.get_logger().info("Initializing motors...")
-        for motor in self.motors.values():
-            motor.controller.axis0.controller.input_pos = 0 # = zero position
-            motor.controller.axis0.controller.input_vel = 0
-            motor.controller.axis0.controller.input_torque = 0
-            motor.controller.axis0.controller.config.control_mode = ControlMode(motor.control_mode)
-            motor.controller.axis0.requested_state = AxisState.CLOSED_LOOP_CONTROL
+        for motor in self.motors:
+            canfunc.set_position(motor.id, 0.0, 0.0, 0.0)
+            canfunc.set_control_mode(motor.id, ControlMode(motor.control_mode))
+            canfunc.set_state(motor.id, AxisState.CLOSED_LOOP_CONTROL)
             
         # ROS topics
         self.cmd_sub = self.create_subscription(JointTrajectoryPoint, '/motors/cmd', self.motors_cmd_callback, 10)
@@ -85,35 +77,48 @@ class MotorDriverNode(Node):
 
     # Set motor state
     def motors_cmd_callback(self, msg : JointTrajectoryPoint):
-
-        # Check for no motors
-        if len(self.motors) == 0:
+        if not self.motors:
             self.get_logger().warn("No motors attached.")
             return
 
-        # Send position command to ODrive
-        for idx, motor in self.motors.items():
-            if len(msg.positions) == self.motor_count:
-                motor.controller.axis0.controller.input_pos = msg.positions[idx]
-            if len(msg.velocities) == self.motor_count:
-                motor.controller.axis0.controller.input_vel = msg.velocities[idx]
-            if len(msg.effort) == self.motor_count:
-                motor.controller.axis0.controller.input_torque = msg.effort[idx]
+        def get_command_value(values, id):
+            try:
+                return values[id]
+            except IndexError:
+                return 0.0
 
-        self.get_logger().info(f"Sent motor command to {motor.name}")
+        # Send position command to ODrive
+        for motor in self.motors:
+            id = motor.id
+            control_mode = motor.control_mode
+            position = get_command_value(msg.positions, id)
+            velocity = get_command_value(msg.velocities, id)
+            torque = get_command_value(msg.effort, id)
+
+            if control_mode == ControlMode.POSITION_CONTROL:
+                canfunc.set_position(id, position=position, velocity_ff=velocity, torque_ff=torque)
+            elif control_mode == ControlMode.VELOCITY_CONTROL:
+                canfunc.set_velocity(id, velocity=velocity, torque_ff=torque)
+            elif control_mode == ControlMode.TORQUE_CONTROL:
+                canfunc.set_torque(id, torque=torque)
+
+            self.get_logger().info(f"Sent motor command to {motor.name}")
+
 
 
     # Publish motor info
     def publish_info(self):
         info_msg = JointTrajectoryPoint()
-        info_msg.positions = [float(motor.controller.axis0.pos_vel_mapper.pos_abs) for motor in self.motors.values()]
-        info_msg.velocities = [float(motor.controller.axis0.pos_vel_mapper.vel) for motor in self.motors.values()]
+        for motor in self.motors:
+            encoder_data = canfunc.get_encoder(motor.id)
+            info_msg.positions.insert(motor.id, float(encoder_data['Position']))
+            info_msg.velocities.insert(motor.id, float(encoder_data['Velocity']))
         self.info_pub.publish(info_msg)
 
     # Put motors in idle state
     def idle(self):
-        for motor in self.motors.values():
-            motor.controller.axis0.requested_state = AxisState.IDLE
+        for motor in self.motors:
+            canfunc.set_state(motor.id, AxisState.IDLE)
 
 # ROS Entry
 def main(args=None):
