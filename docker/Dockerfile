@@ -9,4 +9,6 @@ RUN pip3 install \
         can \
         cantools
 
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+
 WORKDIR /starq_ws

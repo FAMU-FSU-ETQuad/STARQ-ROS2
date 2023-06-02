@@ -1,0 +1,5 @@
+legs:
+  leg0:
+    id: 0
+    motors: [0, 1, 2]
+    kinematics: '5bar-3d'

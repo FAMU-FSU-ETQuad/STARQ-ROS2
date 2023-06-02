@@ -7,6 +7,7 @@
       },
       "includePath": [
         "/opt/ros/humble/include/**",
+        "/starq_ws/src/inverse_kinematics/include/**",
         "/starq_ws/src/trajectory_planner/include/**",
         "/usr/include/**"
       ],

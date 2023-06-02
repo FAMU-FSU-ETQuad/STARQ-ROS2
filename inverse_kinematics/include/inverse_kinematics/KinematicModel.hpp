@@ -1,15 +1,11 @@
 #ifndef STARQ_KINEMATIC_MODEL_HPP_
 #define STARQ_KINEMATIC_MODEL_HPP_
 
-#include <vector>
-#include <string>
+#include <inverse_kinematics/types.hpp>
 
 namespace starq {
 
 class KinematicModel {
-
-using LegPosition = std::vector<float>;
-using MotorPosition = std::vector<float>;
 
 public:
 
