@@ -8,32 +8,32 @@
 #include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
-#include <inverse_kinematics/types.hpp>
-#include <inverse_kinematics/KinematicModel.hpp>
+#include <leg_kinematics/types.hpp>
+#include <leg_kinematics/KinematicModel.hpp>
 
 #include <yaml-cpp/yaml.h>
 
 namespace starq {
 
-class InverseKinematicsNode : public rclcpp::Node {
+class LegKinematicsNode : public rclcpp::Node {
 
 public:
 
-    InverseKinematicsNode() 
-    : rclcpp::Node("inverse_kinematics_node"), max_motor_id_(-1) {
+    LegKinematicsNode() 
+    : rclcpp::Node("leg_kinematics_node"), max_motor_id_(-1) {
 
-        RCLCPP_INFO(this->get_logger(), "Starting Inverse Kinematics node.");
+        RCLCPP_INFO(this->get_logger(), "Starting Leg Kinematics node.");
 
         this->declare_parameter<std::string>("config");
         std::string rel_config_path = this->get_parameter("config").as_string();
-        config_path_ = ament_index_cpp::get_package_share_directory("inverse_kinematics") + "/config/" + rel_config_path;
+        config_path_ = ament_index_cpp::get_package_share_directory("leg_kinematics") + "/config/" + rel_config_path;
 
         cmd_publisher_ = this->create_publisher<trajectory_msgs::msg::JointTrajectoryPoint>(
             "/motors/cmd", 10);
 
         cmd_subscriber_ = this->create_subscription<sensor_msgs::msg::PointCloud>(
             "/legs/cmd", 10, 
-            std::bind(&InverseKinematicsNode::command_callback, this, std::placeholders::_1));
+            std::bind(&LegKinematicsNode::command_callback, this, std::placeholders::_1));
 
         // TODO : Add info publisher & subscriber
         // TODO : Info callback + forward kinematics
@@ -65,7 +65,7 @@ public:
             const MotorPosition motor_position = leg.model->get_inverse(leg_position);
 
             if (motor_position.size() != leg.motor_ids.size()) {
-                RCLCPP_ERROR(this->get_logger(), "Invalid inverse kinematic output for %s", leg.name.c_str());
+                RCLCPP_ERROR(this->get_logger(), "Invalid leg kinematic output for %s", leg.name.c_str());
                 continue;
             }
 
@@ -84,7 +84,7 @@ public:
 
     void init() {
 
-        RCLCPP_INFO(this->get_logger(), "Initializing Inverse Kinematics node from %s", config_path_.c_str());
+        RCLCPP_INFO(this->get_logger(), "Initializing Leg Kinematics node from %s", config_path_.c_str());
 
         const YAML::Node config = YAML::LoadFile(config_path_);
         const YAML::Node legs_conf = config["legs"];
@@ -113,7 +113,7 @@ public:
                     max_motor_id_ = motor_id;
         }
 
-        RCLCPP_INFO(this->get_logger(), "Inverse Kinematics node initialized.");
+        RCLCPP_INFO(this->get_logger(), "Leg Kinematics node initialized.");
     }
 
 private:

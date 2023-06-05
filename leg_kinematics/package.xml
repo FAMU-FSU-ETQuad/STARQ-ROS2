@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>inverse_kinematics</name>
+  <name>leg_kinematics</name>
   <version>1.0.0</version>
-  <description>STARQ Inverse Kinematics package</description>
+  <description>STARQ Leg Kinematics package</description>
   <maintainer email="jboylan@fsu.edu">Jonathan Boylan</maintainer>
   <license>GPL-3.0-only</license>
 

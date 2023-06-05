@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="leg_kinematics" exec="leg_kinematics_node" name="leg_kinematics">
+        <param name="config" value="legs.yaml"/>
+    </node>
+</launch>

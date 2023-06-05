@@ -1,8 +1,8 @@
 #ifndef STARQ_KINEMATIC_MODEL_FIVEBAR2D_HPP_
 #define STARQ_KINEMATIC_MODEL_FIVEBAR2D_HPP_
 
-#include <inverse_kinematics/types.hpp>
-#include <inverse_kinematics/KinematicModel.hpp>
+#include <leg_kinematics/types.hpp>
+#include <leg_kinematics/KinematicModel.hpp>
 
 namespace starq {
 

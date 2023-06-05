@@ -1,7 +1,7 @@
 #ifndef STARQ_KINEMATIC_MODEL_HPP_
 #define STARQ_KINEMATIC_MODEL_HPP_
 
-#include <inverse_kinematics/types.hpp>
+#include <leg_kinematics/types.hpp>
 #include <math.h>
 
 namespace starq {
