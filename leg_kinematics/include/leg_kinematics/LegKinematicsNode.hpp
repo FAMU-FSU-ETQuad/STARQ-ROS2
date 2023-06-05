@@ -30,35 +30,38 @@ public:
 
         cmd_publisher_ = this->create_publisher<trajectory_msgs::msg::JointTrajectoryPoint>(
             "/motors/cmd", 10);
-
         cmd_subscriber_ = this->create_subscription<sensor_msgs::msg::PointCloud>(
             "/legs/cmd", 10, 
             std::bind(&LegKinematicsNode::command_callback, this, std::placeholders::_1));
 
-        // TODO : Add info publisher & subscriber
-        // TODO : Info callback + forward kinematics
+        info_publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud>(
+            "/legs/info", 10);
+        info_subscriber_ = this->create_subscription<trajectory_msgs::msg::JointTrajectoryPoint>(
+            "/motors/info", 10,
+            std::bind(&LegKinematicsNode::info_callback, this, std::placeholders::_1));
 
     }
     
-    void command_callback(const sensor_msgs::msg::PointCloud::SharedPtr pos_msg) const {
-        trajectory_msgs::msg::JointTrajectoryPoint cmd_msg;
+
+    void command_callback(const sensor_msgs::msg::PointCloud::SharedPtr cmd_msg_in) const {
+        trajectory_msgs::msg::JointTrajectoryPoint cmd_msg_out;
 
         if (max_motor_id_ == -1) {
-            RCLCPP_WARN(this->get_logger(), "Leg configuration not loaded. No motors found.");
+            RCLCPP_ERROR(this->get_logger(), "Leg configuration not loaded. No motors found.");
             return;
         }
 
-        cmd_msg.positions = std::vector<double>(max_motor_id_ + 1); // Input size
+        cmd_msg_out.positions = std::vector<double>(max_motor_id_ + 1); // Input size
 
         for (Leg leg : this->legs_) {
 
             size_t idx = leg.id;
-            if (idx >= pos_msg->points.size()) {
+            if (idx >= cmd_msg_in->points.size()) {
                 RCLCPP_WARN(this->get_logger(), "Input PointCloud is missing a position for %s", leg.name.c_str());
                 continue;
             }
 
-            const geometry_msgs::msg::Point32 point = pos_msg->points[idx];
+            const geometry_msgs::msg::Point32 point = cmd_msg_in->points[idx];
             const LegPosition leg_position = {point.x, point.y, point.z};
 
             // Inverse Kinematics
@@ -70,17 +73,55 @@ public:
             }
 
             for (size_t idx = 0; idx < motor_position.size(); idx++) {
-                cmd_msg.positions[leg.motor_ids[idx]] = motor_position[idx];
+                cmd_msg_out.positions[leg.motor_ids[idx]] = motor_position[idx];
             }
 
         }
 
-        cmd_publisher_->publish(cmd_msg);
+        cmd_publisher_->publish(cmd_msg_out);
     }
+
+
+    void info_callback(const trajectory_msgs::msg::JointTrajectoryPoint::SharedPtr info_msg_in) const {
+        sensor_msgs::msg::PointCloud info_msg_out;
+
+        if (max_motor_id_ == -1) {
+            RCLCPP_ERROR(this->get_logger(), "Leg configuration not loaded. No motors found.");
+            return;
+        }
+
+        info_msg_out.points = std::vector<geometry_msgs::msg::Point32>(legs_.size());
+        for (Leg leg : legs_) {
+
+            MotorPosition motor_position(leg.motor_ids.size());
+            for (size_t idx = 0; idx < leg.motor_ids.size(); idx++) {
+                int motor_id = leg.motor_ids[idx];
+                if (motor_id >= int(info_msg_in->positions.size())) {
+                    RCLCPP_ERROR(this->get_logger(), "Motor id %d is out of bounds", motor_id);
+                    continue;
+                }
+                motor_position[idx] = info_msg_in->positions[motor_id];
+            }
+
+            // Forward Kinematics
+            const LegPosition leg_position = leg.model->get_forward(motor_position);
+
+            geometry_msgs::msg::Point32 leg_point;
+            leg_point.x = leg_position[0];
+            leg_point.y = leg_position[1];
+            leg_point.z = leg_position[2];
+
+            info_msg_out.points.push_back(leg_point);
+        }
+
+        info_publisher_->publish(info_msg_out);
+    }
+
 
     void add_model(const std::string name, KinematicModel::Ptr model) {
         model_map_[name] = model;
     }
+
 
     void init() {
 
@@ -95,7 +136,7 @@ public:
             Leg leg;
             leg.name = it->first.as<std::string>();
             leg.id = leg_conf["id"].as<int>();
-            leg.motor_ids = leg_conf["motors"].as<std::vector<int>>();
+            leg.motor_ids = leg_conf["motor_ids"].as<std::vector<int>>();
             std::string kinematic_type = leg_conf["kinematics"].as<std::string>();
             if (model_map_.find(kinematic_type) != model_map_.end()) {
                 leg.model = model_map_[leg_conf["kinematics"].as<std::string>()];
@@ -126,6 +167,9 @@ private:
 
     rclcpp::Publisher<trajectory_msgs::msg::JointTrajectoryPoint>::SharedPtr cmd_publisher_;
     rclcpp::Subscription<sensor_msgs::msg::PointCloud>::SharedPtr cmd_subscriber_;
+
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr info_publisher_;
+    rclcpp::Subscription<trajectory_msgs::msg::JointTrajectoryPoint>::SharedPtr info_subscriber_;
 
 };
 

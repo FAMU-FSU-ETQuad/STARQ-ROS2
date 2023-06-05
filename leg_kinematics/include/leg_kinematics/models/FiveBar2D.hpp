@@ -28,7 +28,7 @@ public:
 
     LegPosition get_forward(const MotorPosition& angles) override {
         // TODO
-        return angles;
+        return {0.0f, 0.0f, 0.0f};
     }
 
 private:

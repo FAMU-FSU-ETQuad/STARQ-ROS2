@@ -3,11 +3,12 @@
 
 #include <string>
 #include <memory>
+#include <array>
 #include <vector>
 
 namespace starq {
 
-using LegPosition = std::vector<float>;
+using LegPosition = std::array<float, 3>;
 using MotorPosition = std::vector<float>;
 
 class KinematicModel;
