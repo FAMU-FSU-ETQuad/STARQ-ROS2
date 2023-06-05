@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="inverse_kinematics" exec="inverse_kinematics_node" name="inverse_kinematics">
+        <param name="config" value="legs.yaml"/>
+    </node>
+</launch>

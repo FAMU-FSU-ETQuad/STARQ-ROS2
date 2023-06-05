@@ -8,6 +8,29 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(trajectory_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(yaml-cpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+
+include_directories(include)
+include_directories(${YAML_CPP_INCLUDE_DIR})
+
+# executable
+add_executable(inverse_kinematics_node src/inverse_kinematics_node.cpp)
+ament_target_dependencies(inverse_kinematics_node rclcpp trajectory_msgs sensor_msgs yaml-cpp ament_index_cpp)
+target_link_libraries(inverse_kinematics_node ${YAML_CPP_LIBRARIES})
+
+install(TARGETS
+  inverse_kinematics_node
+  DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY
+  config
+  DESTINATION share/${PROJECT_NAME})
 
 ament_package()
