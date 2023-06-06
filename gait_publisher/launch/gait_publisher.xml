@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="gait_publisher" exec="gait_publisher_node" name="gait_publisher">
+        <param name="config" value="gaits.yaml"/>
+    </node>
+</launch>

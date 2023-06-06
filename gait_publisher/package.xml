@@ -1,16 +1,20 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>trajectory_planner</name>
+  <name>gait_publisher</name>
   <version>1.0.0</version>
-  <description>STARQ Leg Trajectory Planner package</description>
+  <description>STARQ Gait Publisher package</description>
   <maintainer email="jboylan@fsu.edu">Jonathan Boylan</maintainer>
   <license>GPL-3.0-only</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <exec_depend>ros2launch</exec_depend>
+
   <depend>rclcpp</depend>
-  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>yaml-cpp</depend>
+  <depend>ament_index_cpp</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
