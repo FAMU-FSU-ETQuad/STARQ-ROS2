@@ -16,13 +16,13 @@ include_directories(include)
 include_directories(${YAML_CPP_INCLUDE_DIR})
 
 # executable
-#add_executable(leg_kinematics_node src/leg_kinematics_node.cpp)
-#ament_target_dependencies(leg_kinematics_node rclcpp trajectory_msgs sensor_msgs yaml-cpp #ament_index_cpp)
-#target_link_libraries(leg_kinematics_node ${YAML_CPP_LIBRARIES})
+add_executable(gait_publisher_node src/gait_publisher_node.cpp)
+ament_target_dependencies(gait_publisher_node rclcpp sensor_msgs yaml-cpp ament_index_cpp)
+target_link_libraries(gait_publisher_node ${YAML_CPP_LIBRARIES})
 
-#install(TARGETS
-#  leg_kinematics_node
-#  DESTINATION lib/${PROJECT_NAME})
+install(TARGETS
+  gait_publisher_node
+  DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY
   launch
@@ -30,6 +30,10 @@ install(DIRECTORY
 
 install(DIRECTORY
   config
+  DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY
+  gaits
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()

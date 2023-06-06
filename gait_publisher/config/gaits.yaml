@@ -1,4 +1,4 @@
 gaits:
-  walk:
-    file_name: 'walk.csv'
-    publish_rate: 100.0 # Hz
+  square:
+    file_name: 'square.csv'
+    publish_rate: 0.2 # Hz
