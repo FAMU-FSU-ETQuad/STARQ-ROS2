@@ -1,0 +1,15 @@
+<launch>
+
+    <node pkg="motor_driver" exec="motor_driver_node" name="motor_driver">
+        <param name="config" value="boom.yaml"/>
+    </node>
+
+    <node pkg="leg_kinematics" exec="leg_kinematics_node" name="leg_kinematics">
+        <param name="config" value="boom.yaml"/>
+    </node>
+
+    <node pkg="gait_publisher" exec="gait_publisher_node" name="gait_publisher">
+        <param name="config" value="gaits.yaml"/>
+    </node>
+
+</launch>

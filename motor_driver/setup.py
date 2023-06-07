@@ -14,6 +14,7 @@ setup(
         # Add this line for your launch file
         (os.path.join('share', package_name, 'launch'), ['launch/motor_driver.xml']),
         (os.path.join('share', package_name, 'config'), ['config/motors.yaml']),
+        (os.path.join('share', package_name, 'config'), ['config/boom.yaml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

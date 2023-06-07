@@ -22,7 +22,7 @@ public:
         const float R = std::sqrt(point[X]*point[X] + point[Y]*point[Y]);
         const float alpha = std::acos((R*R + L1_*L1_ - L2_*L2_) / (2.0f*R*L1_));
         angles[A] = (theta+alpha)/(2.0*M_PI);
-        angles[B] = (theta-alpha)/(2.0*M_PI);
+        angles[B] = -0.5f - (theta-alpha)/(2.0*M_PI);
         return angles;
     }
 
