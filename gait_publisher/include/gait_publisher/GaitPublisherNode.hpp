@@ -42,7 +42,7 @@ public:
         config_path_ = ament_index_cpp::get_package_share_directory("gait_publisher") + "/config/" + rel_config_path;
 
         gait_publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud>(
-            "/legs/cmd", 10);
+            "/legs/cmd", 1000);
         gait_subscriber_ = this->create_subscription<std_msgs::msg::String>(
             "/gait", 10, 
             std::bind(&GaitPublisherNode::gait_callback, this, std::placeholders::_1));
@@ -61,16 +61,17 @@ public:
         const Gait& gait = gait_map_.at(gait_name);
 
         using clock = std::chrono::steady_clock;
-        std::chrono::milliseconds loop_time(int(1000 / gait.publish_rate));
+        std::chrono::microseconds loop_time(int(1E6 / gait.publish_rate));
 
         for (sensor_msgs::msg::PointCloud cloud : gait.trajectory) {
             auto cstart = clock::now();
 
             // Publish PointCloud
             gait_publisher_->publish(cloud);
+            RCLCPP_INFO(this->get_logger(), "Published PointCloud.");
 
             auto cend = clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(cend - cstart);
+            auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(cend - cstart);
             if (elapsed < loop_time)
                 std::this_thread::sleep_for(loop_time - elapsed);
         }
