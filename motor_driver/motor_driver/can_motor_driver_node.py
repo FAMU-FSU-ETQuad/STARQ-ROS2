@@ -21,6 +21,7 @@ class ODriveMotor():
     id : int
     serial_number : str
     control_mode : int
+    gear_ratio : float
 
 class MotorDriverNode(Node):
     
@@ -48,13 +49,15 @@ class MotorDriverNode(Node):
             motor_id = int(details['id'])
             motor_sn = str(details['serial_number'])
             motor_mode = int(details['control_mode'])
+            motor_gr = float(details['gear_ratio'])
 
             # Add to index map
             self.motors.append(ODriveMotor(
                 name=motor_name,
                 id=motor_id,
                 serial_number=motor_sn,
-                control_mode=motor_mode
+                control_mode=motor_mode,
+                gear_ratio=motor_gr
             ))
             self.motor_count += 1
 
@@ -91,9 +94,9 @@ class MotorDriverNode(Node):
         for motor in self.motors:
             id = motor.id
             control_mode = motor.control_mode
-            position = get_command_value(msg.positions, id)
-            velocity = get_command_value(msg.velocities, id)
-            torque = get_command_value(msg.effort, id)
+            position = get_command_value(msg.positions, id) * motor.gear_ratio
+            velocity = get_command_value(msg.velocities, id) * motor.gear_ratio
+            torque = get_command_value(msg.effort, id) * motor.gear_ratio
 
             if control_mode == ControlMode.POSITION_CONTROL:
                 canfunc.set_position(id, position=position, velocity_ff=velocity, torque_ff=torque)
@@ -110,7 +113,7 @@ class MotorDriverNode(Node):
     def publish_info(self):
         info_msg = JointTrajectoryPoint()
         for motor in self.motors:
-            encoder_data = canfunc.get_encoder(motor.id)
+            encoder_data = canfunc.get_encoder(motor.id) / motor.gear_ratio
             if encoder_data is None:
                 self.get_logger().error("Could not read encoder data!")
                 return

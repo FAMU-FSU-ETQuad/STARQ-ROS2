@@ -4,11 +4,13 @@ motor0:
   id: 0
   serial_number: "335837603230"
   control_mode: 3
+  gear_ratio: 6
   # zero position
 motor1:
   id: 1
   serial_number: "3355375E3230"
   control_mode: 3
+  gear_ratio: 6
 
 # Control Modes
 # 1: Torque control

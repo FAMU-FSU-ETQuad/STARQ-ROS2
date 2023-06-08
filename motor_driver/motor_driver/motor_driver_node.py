@@ -1,5 +1,4 @@
 import os
-import time
 import yaml
 from typing import Dict
 from typing import Any
@@ -12,7 +11,6 @@ from odrive.enums import ControlMode, AxisState
 # ROS imports
 import rclpy
 from rclpy.node import Node
-from rcl_interfaces.msg import ParameterDescriptor
 from trajectory_msgs.msg import JointTrajectoryPoint
 from ament_index_python.packages import get_package_share_directory
 
@@ -22,6 +20,7 @@ class ODriveMotor():
     serial_number : str
     controller : Any 
     control_mode : int
+    gear_ratio : float
 
 class MotorDriverNode(Node):
     
@@ -49,6 +48,7 @@ class MotorDriverNode(Node):
             motor_id = int(details['id'])
             motor_sn = str(details['serial_number'])
             motor_mode = int(details['control_mode'])
+            motor_gr = float(details['gear_ratio'])
 
             # Connect to motor
             self.get_logger().info(f"Searching for {motor_name} [SN: {motor_sn}] (ID: {motor_id}) ")
@@ -60,7 +60,8 @@ class MotorDriverNode(Node):
                 name=motor_name,
                 serial_number=motor_sn,
                 controller=motor_ctrl,
-                control_mode=motor_mode
+                control_mode=motor_mode,
+                gear_ratio=motor_gr
             )
             self.motor_count += 1
 
@@ -94,11 +95,11 @@ class MotorDriverNode(Node):
         # Send position command to ODrive
         for idx, motor in self.motors.items():
             if len(msg.positions) == self.motor_count:
-                motor.controller.axis0.controller.input_pos = msg.positions[idx]
+                motor.controller.axis0.controller.input_pos = msg.positions[idx] * motor.gear_ratio
             if len(msg.velocities) == self.motor_count:
-                motor.controller.axis0.controller.input_vel = msg.velocities[idx]
+                motor.controller.axis0.controller.input_vel = msg.velocities[idx] * motor.gear_ratio
             if len(msg.effort) == self.motor_count:
-                motor.controller.axis0.controller.input_torque = msg.effort[idx]
+                motor.controller.axis0.controller.input_torque = msg.effort[idx] * motor.gear_ratio
 
         self.get_logger().info(f"Sent motor command to {motor.name}")
 
@@ -106,8 +107,8 @@ class MotorDriverNode(Node):
     # Publish motor info
     def publish_info(self):
         info_msg = JointTrajectoryPoint()
-        info_msg.positions = [float(motor.controller.axis0.pos_vel_mapper.pos_abs) for motor in self.motors.values()]
-        info_msg.velocities = [float(motor.controller.axis0.pos_vel_mapper.vel) for motor in self.motors.values()]
+        info_msg.positions = [float(motor.controller.axis0.pos_vel_mapper.pos_abs) / motor.gear_ratio for motor in self.motors.values()]
+        info_msg.velocities = [float(motor.controller.axis0.pos_vel_mapper.vel) / motor.gear_ratio  for motor in self.motors.values()]
         self.info_pub.publish(info_msg)
 
     # Put motors in idle state
