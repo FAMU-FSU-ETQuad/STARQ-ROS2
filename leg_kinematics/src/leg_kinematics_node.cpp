@@ -3,8 +3,8 @@
 
 using namespace starq;
 
-#define L1 3.0f
-#define L2 3.0f
+#define L1 0.15f
+#define L2 0.165f
 
 int main(int argc, char * argv[]) {
 

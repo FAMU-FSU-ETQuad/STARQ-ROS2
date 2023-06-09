@@ -7,8 +7,8 @@ close all
 %%
 
 % Leg lengths
-L1 = 3;
-L2 = 3;
+L1 = 0.15;
+L2 = 0.165;
 
 % Gait frequency
 f = 0.1; % Hz

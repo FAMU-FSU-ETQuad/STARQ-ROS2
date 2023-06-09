@@ -1,0 +1,17 @@
+legs:
+  front_right:
+    id: 0
+    motor_ids: [0, 1]
+    kinematics: 'fivebar-2d'
+  front_left:
+    id: 1
+    motor_ids: [2, 3]
+    kinematics: 'fivebar-2d'
+  back_right:
+    id: 2
+    motor_ids: [4, 5]
+    kinematics: 'fivebar-2d'
+  back_left:
+    id: 3
+    motor_ids: [6, 7]
+    kinematics: 'fivebar-2d'
