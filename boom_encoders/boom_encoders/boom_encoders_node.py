@@ -36,15 +36,21 @@ class BoomEncodersNode(Node):
         # Ask Teensy for encoder info
         self.serial_port.write(('r').encode())
 
+        self.get_logger().info("A")
+
         # Read from serial
         orientation = float(self.serial_port.readline().decode())
         tilt = float(self.serial_port.readline().decode())
+
+        self.get_logger().info("B")
 
         # Convert to ROS type
         orientation_msg = Float32()
         orientation_msg.data = orientation
         tilt_msg = Float32()
-        tilt_msg.data = tilt * self.boom_length
+        tilt_msg.data = tilt
+
+        self.get_logger().info("C")
 
         # Publish messages
         self.orientation_pub.publish(orientation_msg)
@@ -60,8 +66,8 @@ def main(args=None):
         rclpy.spin(node)
     except Exception as e:
         print(e)
-    except KeyboardInterrupt:
-        pass
+    #except KeyboardInterrupt:
+        #pass
     node.get_logger().info("Boom encoder node closed.")
     node.destroy_node()
     rclpy.shutdown()
