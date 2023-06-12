@@ -30,19 +30,13 @@ class BoomEncodersNode(Node):
         self.get_logger().info("Boom encoders node initialized.")
 
     def publish(self):
-        
-        self.get_logger().info("Sending read command to serial port.")
 
         # Ask Teensy for encoder info
         self.serial_port.write(('r').encode())
 
-        self.get_logger().info("A")
-
         # Read from serial
         orientation = float(self.serial_port.readline().decode())
         tilt = float(self.serial_port.readline().decode())
-
-        self.get_logger().info("B")
 
         # Convert to ROS type
         orientation_msg = Float32()
@@ -50,13 +44,11 @@ class BoomEncodersNode(Node):
         tilt_msg = Float32()
         tilt_msg.data = tilt
 
-        self.get_logger().info("C")
-
         # Publish messages
         self.orientation_pub.publish(orientation_msg)
         self.tilt_pub.publish(tilt_msg)
 
-        self.get_logger().info("Published encoder data.")
+        #self.get_logger().info("Published encoder data.")
         
 
 def main(args=None):
