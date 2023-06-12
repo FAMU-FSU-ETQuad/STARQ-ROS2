@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="boom_encoders" exec="boom_encoders_node" name="boom_encoders">
+        <param name="serial_port" value="/dev/ttyACM0"/>
+        <param name="baud_rate" value="9600"/>
+        <param name="publish_rate" value="100"/>
+    </node>
+</launch>
