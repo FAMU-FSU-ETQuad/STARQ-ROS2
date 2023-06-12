@@ -13,11 +13,11 @@ class BoomEncodersNode(Node):
 
         self.serial_port = serial.Serial('/dev/ttyACM0', 9600)
 
-        self.declare_parameter('boom_length', 5.0) # in meters
-        self.boom_length = self.get_parameter('boom_length').get_parameter_value().double_value
+        #self.declare_parameter('boom_length', 5.0) # in meters
+        #self.boom_length = self.get_parameter('boom_length').get_parameter_value().double_value
 
         self.orientation_pub = self.create_publisher(Float32, '/boom/orientation', 10)
-        self.height_pub = self.create_publisher(Float32, '/boom/height', 10)
+        self.tilt_pub = self.create_publisher(Float32, '/boom/tilt', 10)
 
         self.declare_parameter('publish_rate', 100) # in Hz
         publish_rate = self.get_parameter('publish_rate').get_parameter_value().double_value
@@ -28,21 +28,21 @@ class BoomEncodersNode(Node):
     def publish(self):
         
         # Ask Teensy for encoder info
-        self.serial_port.write(("0\n").encode())
+        self.serial_port.write(('r').encode())
 
         # Read from serial
         orientation = float(self.serial_port.readline().decode())
-        height = float(self.serial_port.readline().decode())
+        tilt = float(self.serial_port.readline().decode())
 
         # Convert to ROS type
         orientation_msg = Float32()
         orientation_msg.data = orientation
-        height_msg = Float32()
-        height_msg.data = height
+        tilt_msg = Float32()
+        tilt_msg.data = tilt * self.boom_length
 
         # Publish messages
         self.orientation_pub.publish(orientation_msg)
-        self.height_pub.publish(height_msg)
+        self.tilt_pub.publish(tilt_msg)
         
 
 def main(args=None):

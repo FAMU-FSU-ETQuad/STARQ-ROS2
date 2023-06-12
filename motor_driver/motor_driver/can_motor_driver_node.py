@@ -22,6 +22,7 @@ class ODriveMotor():
     serial_number : str
     control_mode : int
     gear_ratio : float
+    can_id : int
 
 class MotorDriverNode(Node):
     
@@ -50,6 +51,7 @@ class MotorDriverNode(Node):
             motor_sn = str(details['serial_number'])
             motor_mode = int(details['control_mode'])
             motor_gr = float(details['gear_ratio'])
+            motor_can_id = float(details['can_id'])
 
             # Add to index map
             self.motors.append(ODriveMotor(
@@ -57,16 +59,18 @@ class MotorDriverNode(Node):
                 id=motor_id,
                 serial_number=motor_sn,
                 control_mode=motor_mode,
-                gear_ratio=motor_gr
+                gear_ratio=motor_gr,
+                can_id=motor_can_id
             ))
             self.motor_count += 1
 
         # Initialize motors
         self.get_logger().info("Initializing motors...")
         for motor in self.motors:
-            canfunc.set_position(motor.id, 0.0, 0.0, 0.0)
-            canfunc.set_control_mode(motor.id, ControlMode(motor.control_mode))
-            canfunc.set_state(motor.id, AxisState.CLOSED_LOOP_CONTROL)
+            canfunc.clear_errors(motor.can_id)
+            canfunc.set_position(motor.can_id, 0.0, 0.0, 0.0)
+            canfunc.set_control_mode(motor.can_id, ControlMode(motor.control_mode))
+            canfunc.set_state(motor.can_id, AxisState.CLOSED_LOOP_CONTROL)
             
         # ROS topics
         self.cmd_sub = self.create_subscription(JointTrajectoryPoint, '/motors/cmd', self.motors_cmd_callback, 10)
@@ -93,17 +97,18 @@ class MotorDriverNode(Node):
         # Send position command to ODrive
         for motor in self.motors:
             id = motor.id
+            can_id = motor.can_id
             control_mode = motor.control_mode
             position = get_command_value(msg.positions, id) * motor.gear_ratio
             velocity = get_command_value(msg.velocities, id) * motor.gear_ratio
             torque = get_command_value(msg.effort, id) * motor.gear_ratio
 
             if control_mode == ControlMode.POSITION_CONTROL:
-                canfunc.set_position(id, position=position, velocity_ff=velocity, torque_ff=torque)
+                canfunc.set_position(can_id, position=position, velocity_ff=velocity, torque_ff=torque)
             elif control_mode == ControlMode.VELOCITY_CONTROL:
-                canfunc.set_velocity(id, velocity=velocity, torque_ff=torque)
+                canfunc.set_velocity(can_id, velocity=velocity, torque_ff=torque)
             elif control_mode == ControlMode.TORQUE_CONTROL:
-                canfunc.set_torque(id, torque=torque)
+                canfunc.set_torque(can_id, torque=torque)
 
             self.get_logger().info(f"Sent motor command to {motor.name}")
 
@@ -113,18 +118,18 @@ class MotorDriverNode(Node):
     def publish_info(self):
         info_msg = JointTrajectoryPoint()
         for motor in self.motors:
-            encoder_data = canfunc.get_encoder(motor.id) / motor.gear_ratio
+            encoder_data = canfunc.get_encoder(motor.can_id) / motor.gear_ratio
             if encoder_data is None:
                 self.get_logger().error("Could not read encoder data!")
                 return
-            info_msg.positions.insert(motor.id, float(encoder_data['Position']))
-            info_msg.velocities.insert(motor.id, float(encoder_data['Velocity']))
+            info_msg.positions.insert(motor.id, float(encoder_data['Pos_Estimate']))
+            info_msg.velocities.insert(motor.id, float(encoder_data['Vel_Estimate']))
         self.info_pub.publish(info_msg)
 
     # Put motors in idle state
     def idle(self):
         for motor in self.motors:
-            canfunc.set_state(motor.id, AxisState.IDLE)
+            canfunc.set_state(motor.can_id, AxisState.IDLE)
 
 # ROS Entry
 def main(args=None):

@@ -3,14 +3,22 @@
 import odrive
 from odrive.enums import *
 import time
-import math
+import argparse
 from fibre.libfibre import ObjectLostError
+
+parser = argparse.ArgumentParser()
+parser.add_argument('can_id')
+args = parser.parse_args()
+can_id = args.can_id
+if can_id is None:
+	can_id = 0
+	print("No CAN ID provided. Defaulting to 0.")
 
 print("Starting ODrive configuration.")
 
 print("Finding ODrive connection...")
 odrv0 = odrive.find_any()
-#print("Found ODrive with Serial #: " + str(odrv0.serial_number))
+print("Found ODrive with Serial #: " + f"{odrv0.serial_number:x}")
 
 print("Erasing current configuration...")
 try:
@@ -20,6 +28,10 @@ except ObjectLostError:
 print("Reconnecting to ODrive...")
 odrv0 = odrive.find_any()
 
+print(f"Configuring CAN... (Node ID: {can_id})")
+odrv0.config.enable_can_a = True
+odrv0.can.config.baud_rate = 500000
+odrv0.axis0.config.can.node_id = can_id
 
 print("Configuring power supply...")
 odrv0.config.dc_bus_overvoltage_trip_level = 30
@@ -98,6 +110,9 @@ for v in range(6):
 	odrv0.axis0.controller.input_vel = goto_vel
 	print(f" Setting velocity to {goto_vel}")
 	time.sleep(0.5)
+print("Going back to zero...")
+odrv0.axis0.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
+odrv0.axis0.controller.input_pos = 0.0
 
 odrv0.axis0.requested_state = AXIS_STATE_IDLE
 print("Configuration done.")	

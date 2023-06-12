@@ -14,14 +14,20 @@ def send_can_msg(can_id : int, msg_name : str, msg_data):
     _canbus.send(can_msg)
 
 # Recieve a odrive message from CAN
-def recieve_can_msg(can_id : int, msg_name : str, msg_data):
+def recieve_can_msg(can_id : int, msg_name):
     can_msg = _candb.get_message_by_name(msg_name)
-    can_data = can_msg.encode(msg_data)
     for msg in _canbus:
         if msg.arbitration_id == ((can_id << 5) | can_msg.frame_id):
-            return _candb.decode_message(msg_name, can_data)
+            return _candb.decode_message(msg_name, msg.data)
     return None
 
+# Clear motor errors
+def clear_errors(can_id : int):
+    send_can_msg(can_id, 'Clear_Errors', {})
+
+# Set absolute position
+def set_abs_position(can_id : int, abs_position : float):
+    send_can_msg(can_id, 'Set_Absolute_Position', {'Position': abs_position})
 
 # Set State
 def set_state(can_id : int, state : AxisState):
@@ -43,6 +49,24 @@ def set_velocity(can_id : int, velocity: float, torque_ff : float = 0.0):
 def set_torque(can_id : int, torque: float):
     send_can_msg(can_id, 'Set_Input_Torque', {'Input_Torque': torque})
 
+# Set Gains
+def set_gains(can_id : int, pos_gain : float, vel_gain : float, vel_int_gain : float):
+    send_can_msg(can_id, 'Set_Pos_Gain', {'Pos_Gain' : pos_gain})
+    send_can_msg(can_id, 'Set_Vel_Gains', {'Vel_Gain' : vel_gain, 'Vel_Integrator_Gain': vel_int_gain})
+
 # Encoder data
 def get_encoder(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Encoder_Estimates', {'Pos_Estimate': 0.0, 'Vel_Estimate': 0.0})
+    return recieve_can_msg(can_id, 'Get_Encoder_Estimates')
+
+# Voltage data
+def get_voltage(can_id : int):
+    return recieve_can_msg(can_id, 'Get_Bus_Voltage')['Bus_Voltage']
+
+# Current data
+def get_current(can_id : int):
+    return recieve_can_msg(can_id, 'Get_Iq')['Iq_Measured']
+
+# Temperature data
+def get_temperature(can_id : int):
+    return recieve_can_msg(can_id, 'Get_Temperature')['Motor_Temperature']
+
