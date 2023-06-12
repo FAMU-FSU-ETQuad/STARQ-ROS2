@@ -14,7 +14,7 @@ class BoomEncodersNode(Node):
         self.declare_parameter('serial_port', '/dev/ttyACM0')
         self.declare_parameter('baud_rate', 9600)
         sport = self.get_parameter('serial_port').get_parameter_value().string_value
-        brate = self.get_parameter('baud_rate').get_parameter_value().int_value
+        brate = self.get_parameter('baud_rate').get_parameter_value().integer_value
         self.serial_port = serial.Serial(sport, brate)
 
         #self.declare_parameter('boom_length', 5.0) # in meters
