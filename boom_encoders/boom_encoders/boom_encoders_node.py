@@ -24,7 +24,7 @@ class BoomEncodersNode(Node):
         self.tilt_pub = self.create_publisher(Float32, '/boom/tilt', 10)
 
         self.declare_parameter('publish_rate', 100) # in Hz
-        publish_rate = self.get_parameter('publish_rate').get_parameter_value().double_value
+        publish_rate = self.get_parameter('publish_rate').get_parameter_value().integer_value
         self.publish_timer = self.create_timer(1.0 / publish_rate, self.publish)
 
         self.get_logger().info("Boom encoders node initialized.")
