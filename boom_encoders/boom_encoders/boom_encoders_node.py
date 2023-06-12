@@ -31,6 +31,8 @@ class BoomEncodersNode(Node):
 
     def publish(self):
         
+        self.get_logger().info("Sending read command to serial port.")
+
         # Ask Teensy for encoder info
         self.serial_port.write(('r').encode())
 
@@ -47,6 +49,8 @@ class BoomEncodersNode(Node):
         # Publish messages
         self.orientation_pub.publish(orientation_msg)
         self.tilt_pub.publish(tilt_msg)
+
+        self.get_logger().info("Published encoder data.")
         
 
 def main(args=None):
