@@ -24,8 +24,8 @@ class BoomEncodersNode(Node):
         publish_rate = self.get_parameter('publish_rate').get_parameter_value().integer_value
         self.publish_timer = self.create_timer(1.0 / publish_rate, self.publish)
 
-        self.declare_parameter('base_cycles_per_revolution', 40000*128/16)
-        self.declare_parameter('arm_cycles_per_revolution', 4500*4*72/24)
+        self.declare_parameter('base_cycles_per_revolution', int(40000*128/16))
+        self.declare_parameter('arm_cycles_per_revolution', int(4500*4*72/24))
         self.base_cpr = self.get_parameter('base_cycles_per_revolution').get_parameter_value().integer_value
         self.arm_cpr = self.get_parameter('arm_cycles_per_revolution').get_parameter_value().integer_value
 
