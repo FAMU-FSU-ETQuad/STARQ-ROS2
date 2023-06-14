@@ -17,15 +17,17 @@ class BoomEncodersNode(Node):
         brate = self.get_parameter('baud_rate').get_parameter_value().integer_value
         self.serial_port = serial.Serial(sport, brate)
 
-        #self.declare_parameter('boom_length', 5.0) # in meters
-        #self.boom_length = self.get_parameter('boom_length').get_parameter_value().double_value
-
         self.orientation_pub = self.create_publisher(Float32, '/boom/orientation', 10)
         self.tilt_pub = self.create_publisher(Float32, '/boom/tilt', 10)
 
         self.declare_parameter('publish_rate', 100) # in Hz
         publish_rate = self.get_parameter('publish_rate').get_parameter_value().integer_value
         self.publish_timer = self.create_timer(1.0 / publish_rate, self.publish)
+
+        self.declare_parameter('base_cycles_per_revolution', int(40000*128/16))
+        self.declare_parameter('arm_cycles_per_revolution', int(4500*4*72/24))
+        self.base_cpr = self.get_parameter('base_cycles_per_revolution').get_parameter_value().integer_value
+        self.arm_cpr = self.get_parameter('arm_cycles_per_revolution').get_parameter_value().integer_value
 
         self.get_logger().info("Boom encoders node initialized.")
 
@@ -40,9 +42,9 @@ class BoomEncodersNode(Node):
 
         # Convert to ROS type
         orientation_msg = Float32()
-        orientation_msg.data = orientation
+        orientation_msg.data = orientation / self.base_cpr
         tilt_msg = Float32()
-        tilt_msg.data = tilt
+        tilt_msg.data = tilt / self.arm_cpr
 
         # Publish messages
         self.orientation_pub.publish(orientation_msg)

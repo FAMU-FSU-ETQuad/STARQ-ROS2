@@ -1,0 +1,12 @@
+[Unit]
+Description=Startup Script
+After=network-online.target
+Wants=network.online.target
+
+[Service]
+ExecStart=/home/pi/startup.sh
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
