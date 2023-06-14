@@ -101,7 +101,7 @@ time.sleep(0.5)
 print("Going back to zero...")
 odrv0.axis0.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
 odrv0.axis0.controller.input_pos = 0.0
-time.sleep(7.5)
+time.sleep(3.5)
 
 odrv0.axis0.requested_state = AXIS_STATE_IDLE
 print("Configuration done.")	
