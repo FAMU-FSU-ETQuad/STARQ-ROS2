@@ -10,9 +10,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument('can_id')
 args = parser.parse_args()
 can_id = args.can_id
-if can_id is None:
-	can_id = 0
-	print("No CAN ID provided. Defaulting to 0.")
+
+def save_config(odrv):
+	print("Saving configuration...")
+	try:
+		odrv.save_configuration()
+	except ObjectLostError:
+		time.sleep(2.0)
+	print("Reconnecting to ODrive...")
+	return odrive.find_any()
+
 
 print("Starting ODrive configuration.")
 
@@ -24,7 +31,7 @@ print("Erasing current configuration...")
 try:
 	odrv0.erase_configuration()
 except ObjectLostError:
-	time.sleep(3.0)
+	time.sleep(2.0)
 print("Reconnecting to ODrive...")
 odrv0 = odrive.find_any()
 
@@ -50,13 +57,7 @@ odrv0.axis0.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 while odrv0.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 
-print("Saving configuration...")
-try:
-	odrv0.save_configuration()
-except ObjectLostError:
-	time.sleep(3.0)
-print("Reconnecting to ODrive...")
-odrv0 = odrive.find_any()
+odrv0 = save_config(odrv0)
 
 print("Configuring limits...")
 odrv0.axis0.config.motor.current_soft_max = 7.76
@@ -67,29 +68,14 @@ print("Configuring encoder...")
 odrv0.axis0.config.load_encoder = ENCODER_ID_ONBOARD_ENCODER0
 odrv0.axis0.config.commutation_encoder = ENCODER_ID_ONBOARD_ENCODER0
 
-print("Saving configuration...")
-try:
-	odrv0.save_configuration()
-except ObjectLostError:
-	time.sleep(3.0)
-print("Reconnecting to ODrive...")
-odrv0 = odrive.find_any()
+odrv0 = save_config(odrv0)
 
 print("Running encoder calibration...")
 odrv0.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
 while odrv0.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 	
-print("Saving configuration...")
-try:
-	odrv0.save_configuration()
-except ObjectLostError:
-	time.sleep(3.0)
-print("Reconnecting to ODrive...")
-odrv0 = odrive.find_any()
-
-print("Reconnecting to ODrive...")
-odrv0 = odrive.find_any()
+odrv0 = save_config(odrv0)
 
 print("Verification: ")
 print(" Current motor position = " + str(odrv0.axis0.pos_vel_mapper.pos_rel))
@@ -110,9 +96,12 @@ for v in range(6):
 	odrv0.axis0.controller.input_vel = goto_vel
 	print(f" Setting velocity to {goto_vel}")
 	time.sleep(0.5)
+odrv0.axis0.controller.input_vel = 0.0
+time.sleep(0.5)
 print("Going back to zero...")
 odrv0.axis0.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
 odrv0.axis0.controller.input_pos = 0.0
+time.sleep(7.5)
 
 odrv0.axis0.requested_state = AXIS_STATE_IDLE
 print("Configuration done.")	

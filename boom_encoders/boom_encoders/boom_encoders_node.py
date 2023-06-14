@@ -58,8 +58,8 @@ def main(args=None):
         rclpy.spin(node)
     except Exception as e:
         print(e)
-    #except KeyboardInterrupt:
-        #pass
+    except KeyboardInterrupt:
+        pass
     node.get_logger().info("Boom encoder node closed.")
     node.destroy_node()
     rclpy.shutdown()
