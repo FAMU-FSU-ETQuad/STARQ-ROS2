@@ -8,7 +8,7 @@ _canbus = can.Bus("can0", bustype="socketcan")
 
 # Send a odrive message to CAN
 def send_can_msg(can_id : int, msg_name : str, msg_data):
-    can_msg = _candb.get_message_by_name(msg_name)
+    can_msg = _candb.get_message_by_name("Axis0_" + msg_name)
     can_data = can_msg.encode(msg_data)
     can_msg = can.Message(arbitration_id=((can_id << 5) | can_msg.frame_id), is_extended_id=False, data=can_data)
     _canbus.send(can_msg)
