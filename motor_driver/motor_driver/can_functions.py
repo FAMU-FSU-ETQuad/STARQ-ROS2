@@ -70,3 +70,6 @@ def get_current(can_id : int):
 def get_temperature(can_id : int):
     return recieve_can_msg(can_id, 'Get_Temperature')['Motor_Temperature']
 
+def close():
+    _canbus.shutdown()
+

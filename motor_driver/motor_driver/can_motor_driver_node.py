@@ -142,6 +142,7 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     node.idle()
+    canfunc.close()
     node.get_logger().info("Motor driver node closed.")
     node.destroy_node()
     rclpy.shutdown()

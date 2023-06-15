@@ -1,5 +1,5 @@
 <launch>
     <node pkg="motor_driver" exec="motor_driver_node" name="motor_driver">
-        <param name="config" value="motors.yaml"/>
+        <param name="config" value="boom.yaml"/>
     </node>
 </launch>
