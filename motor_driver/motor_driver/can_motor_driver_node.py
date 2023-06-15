@@ -51,7 +51,7 @@ class MotorDriverNode(Node):
             motor_sn = str(details['serial_number'])
             motor_mode = int(details['control_mode'])
             motor_gr = float(details['gear_ratio'])
-            motor_can_id = float(details['can_id'])
+            motor_can_id = int(details['can_id'])
 
             # Add to index map
             self.motors.append(ODriveMotor(
