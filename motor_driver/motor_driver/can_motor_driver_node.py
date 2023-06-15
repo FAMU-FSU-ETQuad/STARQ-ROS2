@@ -119,7 +119,7 @@ class MotorDriverNode(Node):
             try:
                 encoder_data = canfunc.get_encoder(motor.can_id) / motor.gear_ratio
             except Exception as e:
-                print(e)
+                self.get_logger().info(e)
             self.get_logger().info("D")
             if encoder_data is None:
                 self.get_logger().error("Could not read encoder data!")
