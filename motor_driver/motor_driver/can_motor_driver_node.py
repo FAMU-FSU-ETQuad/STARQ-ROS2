@@ -91,8 +91,6 @@ class MotorDriverNode(Node):
             except IndexError:
                 return 0.0
 
-        self.get_logger().info("A")
-
         # Send position command to ODrive
         for motor in self.motors:
             id = motor.id
@@ -101,8 +99,6 @@ class MotorDriverNode(Node):
             position = get_command_value(msg.positions, id) * motor.gear_ratio
             velocity = get_command_value(msg.velocities, id) * motor.gear_ratio
             torque = get_command_value(msg.effort, id) * motor.gear_ratio
-
-            self.get_logger().info("B")
 
             if control_mode == ControlMode.POSITION_CONTROL:
                 canfunc.set_position(can_id, position=position, velocity_ff=velocity, torque_ff=torque)
@@ -118,8 +114,8 @@ class MotorDriverNode(Node):
     # Publish motor info
     def publish_info(self):
         info_msg = JointTrajectoryPoint()
-        self.get_logger().info("C")
         for motor in self.motors:
+            self.get_logger().info("C")
             encoder_data = canfunc.get_encoder(motor.can_id) / motor.gear_ratio
             self.get_logger().info("D")
             if encoder_data is None:
