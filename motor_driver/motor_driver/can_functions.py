@@ -25,17 +25,13 @@ def recieve_can_msg(can_id : int, msg_name):
 def clear_errors(can_id : int):
     send_can_msg(can_id, 'Clear_Errors', {})
 
-# Set absolute position
-def set_abs_position(can_id : int, abs_position : float):
-    send_can_msg(can_id, 'Set_Absolute_Position', {'Position': abs_position})
-
 # Set State
 def set_state(can_id : int, state : AxisState):
     send_can_msg(can_id, 'Set_Axis_State', {'Axis_Requested_State': state})
 
 # Set Control Type
 def set_control_mode(can_id : int, mode : ControlMode):
-    send_can_msg(can_id, 'Set_Controller_Mode', {'Control_Mode': mode})
+    send_can_msg(can_id, 'Set_Controller_Mode', {'Control_Mode': mode, 'Input_Mode': 1})
 
 # Closed Loop Position Control
 def set_position(can_id : int, position : float, velocity_ff : float = 0.0, torque_ff : float = 0.0):
