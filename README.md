@@ -2,21 +2,19 @@
 
 | Jonathan Boylan | jboylan@fsu.edu | (786) 566-7230 |
 
-## Directory ##
-
-### **boom_rpi** ###
+## **boom_rpi** ##
 
 Information on how to set up the boom module. Includes Raspberry Pi setup scripts, electrical wiring, and other configuration instructions.
 
-### **matlab** ###
+## **matlab** ##
 
 Contains BoomController class and examples of how to control the boom from MATLAB.
 
-### **boom_encoders** ###
+## **boom_encoders** ##
 
 ROS2 Python package that reads the encoder data (from Teensy via Serial), and publishes it to ROS.
 
-#### Params ####
+### Params ###
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | `serial_port` | Serial port used for communication with the Teensy | `'/dev/ttyACM0'` |
@@ -25,17 +23,17 @@ ROS2 Python package that reads the encoder data (from Teensy via Serial), and pu
 | `base_cycles_per_revolution` | Reduction from steps to revolutions for the base encoder | `161792` |
 | `arm_cycles_per_revolution` | Reduction for the arm encoder | `!TODO` |
 
-#### Publishers ####
+### Publishers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/boom/orientation` | Position of the arm around the base | Float32 | Rev |
 | `/boom/tilt` | Position of the arm with respect to ground | Float32 | Rev |
 
-### **motor_driver** ### 
+## **motor_driver** ##
 
 ROS2 Python package that communicates with the motors via CAN.
 
-#### Config YAML ####
+### Config YAML ###
 ```
 motor-name:
     id: <int> (0-M motors)
@@ -44,19 +42,19 @@ motor-name:
     can_id: <int> (0-63)
 ```
 
-##### Control Modes #####
+#### Control Modes ####
 1. Torque Control
 2. Velocity Control *(+ FF Torque)*
 3. Position Control *(+ FF Torque, Velocity)*
 
-#### Subscribers ####
+### Subscribers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/motors/cmd` | Motor set position command | JointTrajectoryPoint | rev, rev/s, Nm |
 
 *Note: JointTrajectoryPoint is a list of positions, velocities, and efforts (torques). The index of each value in the list corresponds to the id of the motor to actuate.*
 
-#### Publishers ####
+### Publishers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/motors/info` | Motor encoder readings | JointTrajectoryPoint | rev, rev/s, Nm |
@@ -64,17 +62,17 @@ motor-name:
 | `/motors/current` | Motor current readings | Float32MultiArray | A |
 | `/motors/temperature` | Motor temperature readings | Float32MultiArray | deg C |
 
-#### Services ####
+### Services ###
 | Topic | Description |
 | ----- | ----------- |
 | `/motors/set_zero` | Set current position to zero for all motors |
 | `/motors/clear_errors` | Clear errors on all the motors |
 
-### **leg_kinematics** ###
+## **leg_kinematics** ##
 
 ROS2 C++ Package that uses the leg inverse kinematics to convert the leg position from Cartesian space to Motor space.
 
-#### Config YAML ####
+### Config YAML ###
 ```
 leg-name:
   id: <int> (0-N legs)
@@ -82,14 +80,14 @@ leg-name:
   kinematics: <string>
 ```
 
-##### Kinematic Models #####
+#### Kinematic Models ####
 | Name | Description |
 | ---- | ----------- |
 | `fivebar-2d` | 2 DOF Five bar linkage (ETQuad) |
 | `fivebar-3d` *(TODO)* | 3 DOF Five bar linkage (STARQ) |
 | `rr-2d` *(TODO)* | 2 DOF Revolute-Revolute linkage |
 
-#### Subscribers ####
+### Subscribers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/legs/cmd` | Set leg position command | PointCloud | m |
@@ -97,17 +95,17 @@ leg-name:
 
 *Note: PointCloud is a list of 3D points. The index of each point in the list corresponds to the id of the leg to actuate.*
 
-#### Publishers ####
+### Publishers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/legs/info` | Forward kinematics applied to the motor encoder readings | PointCloud | m |
 | `/motors/cmd` | Command to motor driver | JointTrajectoryPoint | rev |
 
-### **gait_publisher** ###
+## **gait_publisher** ##
 
 ROS2 C++ package that reads point trajectories from a file and publishes them as leg commands at a fixed rate.
 
-#### Config YAML ####
+### Config YAML ###
 ```
 gait-name:
   file_name: <string>
@@ -115,16 +113,16 @@ gait-name:
 ```
 *Note: `file_name` is relative to `gait_publisher/gaits/` folder*
 
-#### Subscribers ####
+### Subscribers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/gait` | Name of the gait to run | String | - |
 
-#### Publishers ####
+### Publishers ###
 | Topic | Description | Type | Units |
 | ----- | ----------- | ---- | ----- |
 | `/legs/cmd` | Leg position commands | PointCloud | m |
 
-### **docker** ###
+## **docker** ##
 
 Contains scripts and Dockerfiles used for development purposes.
