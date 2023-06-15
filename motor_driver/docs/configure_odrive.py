@@ -32,7 +32,7 @@ odrv0.can.config.baud_rate = 500000
 odrv0.axis0.config.can.node_id = can_id
 
 print("Configuring power supply...")
-odrv0.config.dc_bus_overvoltage_trip_level = 30
+odrv0.config.dc_bus_overvoltage_trip_level = 35
 odrv0.config.dc_max_positive_current = 5
 odrv0.config.dc_max_negative_current = -1
 
