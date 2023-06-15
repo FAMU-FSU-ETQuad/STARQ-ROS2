@@ -1,6 +1,5 @@
 import can
 import cantools
-from odrive.enums import ControlMode, AxisState
 
 # Global objects
 _candb = cantools.db.load_file("/home/pi/ros2_ws/src/boom_packages/motor_driver/docs/odrive-cansimple.dbc")
@@ -26,11 +25,11 @@ def clear_errors(can_id : int):
     send_can_msg(can_id, 'Clear_Errors', {})
 
 # Set State
-def set_state(can_id : int, state : AxisState):
+def set_state(can_id : int, state : int):
     send_can_msg(can_id, 'Set_Axis_State', {'Axis_Requested_State': state})
 
 # Set Control Type
-def set_control_mode(can_id : int, mode : ControlMode):
+def set_control_mode(can_id : int, mode : int):
     send_can_msg(can_id, 'Set_Controller_Mode', {'Control_Mode': mode, 'Input_Mode': 1})
 
 # Closed Loop Position Control

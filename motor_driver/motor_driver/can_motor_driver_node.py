@@ -69,8 +69,8 @@ class MotorDriverNode(Node):
         for motor in self.motors:
             canfunc.clear_errors(motor.can_id)
             canfunc.set_position(motor.can_id, 0.0, 0.0, 0.0)
-            canfunc.set_control_mode(motor.can_id, ControlMode(motor.control_mode))
-            canfunc.set_state(motor.can_id, AxisState.CLOSED_LOOP_CONTROL)
+            canfunc.set_control_mode(motor.can_id, motor.control_mode)
+            canfunc.set_state(motor.can_id, int(AxisState.CLOSED_LOOP_CONTROL))
             
         # ROS topics
         self.cmd_sub = self.create_subscription(JointTrajectoryPoint, '/motors/cmd', self.motors_cmd_callback, 10)
@@ -129,7 +129,7 @@ class MotorDriverNode(Node):
     # Put motors in idle state
     def idle(self):
         for motor in self.motors:
-            canfunc.set_state(motor.can_id, AxisState.IDLE)
+            canfunc.set_state(motor.can_id, int(AxisState.IDLE))
 
 # ROS Entry
 def main(args=None):
