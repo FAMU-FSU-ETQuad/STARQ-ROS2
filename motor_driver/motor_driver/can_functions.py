@@ -3,7 +3,7 @@ import cantools
 from odrive.enums import ControlMode, AxisState
 
 # Global objects
-_candb = cantools.db.load_file("odrive-cansimple.dbc")
+_candb = cantools.db.load_file("/home/pi/ros2_ws/src/boom_packages/motor_driver/docs/odrive-cansimple.dbc")
 _canbus = can.Bus("can0", bustype="socketcan")
 
 # Send a odrive message to CAN
