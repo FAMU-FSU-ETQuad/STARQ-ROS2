@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'motor_driver_node = motor_driver.motor_driver_node:main'
+            'motor_driver_node = motor_driver.can_motor_driver_node:main'
         ],
     },
 )
