@@ -13,7 +13,8 @@ def send_can_msg(can_id : int, msg_name : str, msg_data):
     _canbus.send(can_msg)
 
 # Recieve a odrive message from CAN
-def recieve_can_msg(can_id : int, msg_name):
+def recieve_can_msg(can_id : int, msg_name : str, msg_data):
+    send_can_msg(can_id, msg_name, msg_data)
     can_msg = _candb.get_message_by_name("Axis0_" + msg_name)
     for msg in _canbus:
         if msg.arbitration_id == ((can_id << 5) | can_msg.frame_id):
@@ -51,19 +52,19 @@ def set_gains(can_id : int, pos_gain : float, vel_gain : float, vel_int_gain : f
 
 # Encoder data
 def get_encoder(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Encoder_Estimates')
+    return recieve_can_msg(can_id, 'Get_Encoder_Estimates', {'Pos_Estimate': 0, 'Vel_Estimate': 0})
 
 # Voltage data
 def get_voltage(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Bus_Voltage')['Bus_Voltage']
+    return recieve_can_msg(can_id, 'Get_Bus_Voltage', {'Bus_Voltage': 0})['Bus_Voltage']
 
 # Current data
 def get_current(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Iq')['Iq_Measured']
+    return recieve_can_msg(can_id, 'Get_Iq', {'Iq_Measured': 0})['Iq_Measured']
 
 # Temperature data
 def get_temperature(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Temperature')['Motor_Temperature']
+    return recieve_can_msg(can_id, 'Get_Temperature', {'Motor_Temperature': 0})['Motor_Temperature']
 
 def close():
     _canbus.shutdown()
