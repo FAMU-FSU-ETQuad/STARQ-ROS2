@@ -116,7 +116,10 @@ class MotorDriverNode(Node):
         info_msg = JointTrajectoryPoint()
         for motor in self.motors:
             self.get_logger().info("C")
-            encoder_data = canfunc.get_encoder(motor.can_id) / motor.gear_ratio
+            try:
+                encoder_data = canfunc.get_encoder(motor.can_id) / motor.gear_ratio
+            except Exception as e:
+                print(e)
             self.get_logger().info("D")
             if encoder_data is None:
                 self.get_logger().error("Could not read encoder data!")
