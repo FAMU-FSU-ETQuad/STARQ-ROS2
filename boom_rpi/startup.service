@@ -4,7 +4,7 @@ After=network-online.target
 Wants=network.online.target
 
 [Service]
-ExecStart=/home/pi/startup.sh
+ExecStart=/home/pi/ros2_ws/src/boom_packages/boom_rpi/startup.sh
 User=pi
 Group=pi
 
