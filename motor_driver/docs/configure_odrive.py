@@ -11,15 +11,6 @@ parser.add_argument('can_id')
 args = parser.parse_args()
 can_id = args.can_id
 
-def save_config(odrv):
-	print("Saving configuration...")
-	try:
-		odrv.save_configuration()
-	except ObjectLostError:
-		time.sleep(2.0)
-	print("Reconnecting to ODrive...")
-	return odrive.find_any()
-
 
 print("Starting ODrive configuration.")
 
@@ -31,7 +22,7 @@ print("Erasing current configuration...")
 try:
 	odrv0.erase_configuration()
 except ObjectLostError:
-	time.sleep(2.0)
+	time.sleep(3.0)
 print("Reconnecting to ODrive...")
 odrv0 = odrive.find_any()
 
@@ -57,7 +48,13 @@ odrv0.axis0.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 while odrv0.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 
-odrv0 = save_config(odrv0)
+print("Saving configuration...")
+try:
+	odrv0.save_configuration()
+except ObjectLostError:
+	time.sleep(3.0)
+print("Reconnecting to ODrive...")
+odrv0 = odrive.find_any()
 
 print("Configuring limits...")
 odrv0.axis0.config.motor.current_soft_max = 7.76
@@ -68,14 +65,26 @@ print("Configuring encoder...")
 odrv0.axis0.config.load_encoder = ENCODER_ID_ONBOARD_ENCODER0
 odrv0.axis0.config.commutation_encoder = ENCODER_ID_ONBOARD_ENCODER0
 
-odrv0 = save_config(odrv0)
+print("Saving configuration...")
+try:
+	odrv0.save_configuration()
+except ObjectLostError:
+	time.sleep(3.0)
+print("Reconnecting to ODrive...")
+odrv0 = odrive.find_any()
 
 print("Running encoder calibration...")
 odrv0.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
 while odrv0.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 	
-odrv0 = save_config(odrv0)
+print("Saving configuration...")
+try:
+	odrv0.save_configuration()
+except ObjectLostError:
+	time.sleep(3.0)
+print("Reconnecting to ODrive...")
+odrv0 = odrive.find_any()
 
 print("Verification: ")
 print(" Current motor position = " + str(odrv0.axis0.pos_vel_mapper.pos_rel))
