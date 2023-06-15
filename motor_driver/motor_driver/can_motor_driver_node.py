@@ -19,7 +19,6 @@ import motor_driver.can_functions as canfunc
 class ODriveMotor():
     name : str
     id : int
-    serial_number : str
     control_mode : int
     gear_ratio : float
     can_id : int
@@ -48,7 +47,6 @@ class MotorDriverNode(Node):
         for motor_name, details in motors_dict.items():
 
             motor_id = int(details['id'])
-            motor_sn = str(details['serial_number'])
             motor_mode = int(details['control_mode'])
             motor_gr = float(details['gear_ratio'])
             motor_can_id = int(details['can_id'])
@@ -57,7 +55,6 @@ class MotorDriverNode(Node):
             self.motors.append(ODriveMotor(
                 name=motor_name,
                 id=motor_id,
-                serial_number=motor_sn,
                 control_mode=motor_mode,
                 gear_ratio=motor_gr,
                 can_id=motor_can_id

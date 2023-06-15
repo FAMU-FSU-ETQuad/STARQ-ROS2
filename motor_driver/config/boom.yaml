@@ -4,7 +4,7 @@ motor0:
   id: 0
   control_mode: 3
   gear_ratio: 6.0
-  can_id: 0
+  can_id: 1
   # zero position
 #motor1:
 #  id: 1
