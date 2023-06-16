@@ -1,5 +1,5 @@
 legs:
   leg0:
     id: 0
-    motor_ids: [0, 1]
+    motor_ids: [1, 0]
     kinematics: 'fivebar-2d'
