@@ -7,11 +7,11 @@ close all
 %%
 
 % Leg lengths
-L1 = 0.15;
-L2 = 0.165;
+L1 = 50;
+L2 = 150;
 
 % Gait frequency
-f = 0.1; % Hz
+f = 0.5; % Hz
 
 % Number of points on trajectory
 N = 500;
