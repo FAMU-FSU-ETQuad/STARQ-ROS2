@@ -18,4 +18,6 @@ def get_encoder(can_id : int):
     return recieve_can_msg(can_id, 'Get_Encoder_Estimates', {'Pos_Estimate': 0, 'Vel_Estimate': 0})
 
 while True:
-    print(get_encoder(0))
+    encoder_data = get_encoder(0)
+    print('Position:' + str(encoder_data['Pos_Estimate']))
+    print('Velocity:' + str(encoder_data['Vel_Estimate']))
