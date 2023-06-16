@@ -19,5 +19,5 @@ def get_encoder(can_id : int):
 
 while True:
     encoder_data = get_encoder(0)
-    print('Position:' + str(encoder_data['Pos_Estimate']))
-    print('Velocity:' + str(encoder_data['Vel_Estimate']))
+    print('Position:' + str(float(encoder_data['Pos_Estimate'])))
+    print('Velocity:' + str(float(encoder_data['Vel_Estimate'])))

@@ -119,8 +119,10 @@ class MotorDriverNode(Node):
             if encoder_data is None:
                 self.get_logger().error("Could not read encoder data!")
                 return
+            self.get_logger().info("C")
             info_msg.positions.insert(motor.id, float(encoder_data['Pos_Estimate']))
             info_msg.velocities.insert(motor.id, float(encoder_data['Vel_Estimate']))
+            self.get_logger().info("D")
         self.info_pub.publish(info_msg)
 
     # Put motors in idle state
