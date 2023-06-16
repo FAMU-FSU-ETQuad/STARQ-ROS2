@@ -6,7 +6,7 @@ _candb = cantools.db.load_file("/home/pi/ros2_ws/src/boom_packages/motor_driver/
 _canbus = can.Bus("can0", bustype="socketcan")
 
 # Recieve a odrive message from CAN
-def recieve_can_msg(can_id : int, msg_name : str, msg_data):
+def recieve_can_msg(can_id : int, msg_name : str):
     can_msg = _candb.get_message_by_name("Axis0_" + msg_name)
     for msg in _canbus:
         if msg.arbitration_id == ((can_id << 5) | can_msg.frame_id):
@@ -15,7 +15,7 @@ def recieve_can_msg(can_id : int, msg_name : str, msg_data):
 
 # Encoder data
 def get_encoder(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Encoder_Estimates', {'Pos_Estimate': 0, 'Vel_Estimate': 0})
+    return recieve_can_msg(can_id, 'Get_Encoder_Estimates')
 
 while True:
     encoder_data = get_encoder(0)
