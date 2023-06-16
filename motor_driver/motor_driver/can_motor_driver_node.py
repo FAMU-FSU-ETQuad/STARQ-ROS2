@@ -100,14 +100,14 @@ class MotorDriverNode(Node):
             velocity = get_command_value(msg.velocities, id) * motor.gear_ratio
             torque = get_command_value(msg.effort, id) * motor.gear_ratio
 
-            if control_mode == ControlMode.POSITION_CONTROL:
+            if control_mode == 3:
                 canfunc.set_position(can_id, position=position, velocity_ff=velocity, torque_ff=torque)
-            elif control_mode == ControlMode.VELOCITY_CONTROL:
+            elif control_mode == 2:
                 canfunc.set_velocity(can_id, velocity=velocity, torque_ff=torque)
-            elif control_mode == ControlMode.TORQUE_CONTROL:
+            elif control_mode == 1:
                 canfunc.set_torque(can_id, torque=torque)
 
-            self.get_logger().info(f"Sent motor command to {motor.name}")
+            self.get_logger().info(f"Sent motor command [P: {position}, V:{velocity}, T:{torque}] to {motor.name}")
 
 
 
