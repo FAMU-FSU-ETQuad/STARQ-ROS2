@@ -8,3 +8,9 @@ gaits:
   swim-test:
     file_name: 'swimtest-7pt.csv'
     publish_rate: 1250 # Hz
+  walk1-test:
+    file_name: 'walktest1-7pt.csv'
+    publish_rate: 1250 # Hz
+  walk2-test:
+    file_name: 'walktest2-7pt.csv'
+    publish_rate: 1250 # Hz
