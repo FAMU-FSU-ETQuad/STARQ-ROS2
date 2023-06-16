@@ -68,7 +68,7 @@ public:
 
             // Publish PointCloud
             gait_publisher_->publish(cloud);
-            RCLCPP_INFO(this->get_logger(), "Published PointCloud.");
+            //RCLCPP_INFO(this->get_logger(), "Published PointCloud.");
 
             auto cend = clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(cend - cstart);

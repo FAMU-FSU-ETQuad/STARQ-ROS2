@@ -79,7 +79,7 @@ public:
         }
 
         cmd_publisher_->publish(cmd_msg_out);
-        RCLCPP_INFO(this->get_logger(), "Published JointTrajectoryPoint.");
+        //RCLCPP_INFO(this->get_logger(), "Published JointTrajectoryPoint.");
     }
 
 

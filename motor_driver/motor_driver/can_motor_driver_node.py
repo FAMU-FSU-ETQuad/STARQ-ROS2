@@ -122,7 +122,7 @@ class MotorDriverNode(Node):
             elif control_mode == 1:
                 canfunc.set_torque(can_id, torque=torque)
 
-            self.get_logger().info(f"Sent motor command [P: {position}, V:{velocity}, T:{torque}] to {motor.name}")
+            #self.get_logger().info(f"Sent motor command [P: {position}, V:{velocity}, T:{torque}] to {motor.name}")
 
 
 
