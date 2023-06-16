@@ -37,7 +37,7 @@ public:
         info_publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud>(
             "/legs/info", 10);
         info_subscriber_ = this->create_subscription<trajectory_msgs::msg::JointTrajectoryPoint>(
-            "/motors/info", 10,
+            "/motors/info/encoders", 10,
             std::bind(&LegKinematicsNode::info_callback, this, std::placeholders::_1));
 
     }
