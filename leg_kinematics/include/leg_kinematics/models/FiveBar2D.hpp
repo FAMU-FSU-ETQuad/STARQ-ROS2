@@ -18,11 +18,12 @@ public:
 
     MotorPosition get_inverse(const LegPosition& point) override {
         MotorPosition angles(2);
-        const float theta = std::atan2(point[Y], point[X]);
+        const float theta0 = std::atan2(point[Y], point[X]);
+        const float theta1 = std::atan2(point[Y], -point[X]);
         const float R = std::sqrt(point[X]*point[X] + point[Y]*point[Y]);
         const float alpha = std::acos((R*R + L1_*L1_ - L2_*L2_) / (2.0f*R*L1_));
-        angles[A] = (theta+alpha)/(2.0*M_PI);
-        angles[B] = -0.5f - (theta-alpha)/(2.0*M_PI);
+        angles[A] = (theta0+alpha)/(2.0*M_PI);
+        angles[B] = (theta1+alpha)/(2.0*M_PI);
         return angles;
     }
 
