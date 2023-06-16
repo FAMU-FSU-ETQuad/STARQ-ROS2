@@ -49,21 +49,29 @@ def set_gains(can_id : int, pos_gain : float, vel_gain : float, vel_int_gain : f
     send_can_msg(can_id, 'Set_Pos_Gain', {'Pos_Gain' : pos_gain})
     send_can_msg(can_id, 'Set_Vel_Gains', {'Vel_Gain' : vel_gain, 'Vel_Integrator_Gain': vel_int_gain})
 
+# Set Limits
+def set_limits(can_id : int, vel_lim : float, curr_lim : float):
+    send_can_msg(can_id, 'Set_Limits', {'Velocity_Limit': vel_lim, 'Current_Limit': curr_lim})
+
 # Encoder data
 def get_encoder(can_id : int):
     return recieve_can_msg(can_id, 'Get_Encoder_Estimates')
 
 # Voltage data
 def get_voltage(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Bus_Voltage')['Bus_Voltage']
+    return recieve_can_msg(can_id, 'Get_Bus_Voltage_Current')
 
 # Current data
 def get_current(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Iq')['Iq_Measured']
+    return recieve_can_msg(can_id, 'Get_Iq')
+
+# Errors
+def get_error(can_id : int):
+    return recieve_can_msg(can_id, 'Get_Error')
 
 # Temperature data
 def get_temperature(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Temperature')['Motor_Temperature']
+    return recieve_can_msg(can_id, 'Get_Temperature')
 
 def close():
     _canbus.shutdown()

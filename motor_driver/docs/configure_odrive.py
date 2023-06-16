@@ -33,6 +33,7 @@ odrv0.axis0.config.can.node_id = can_id
 odrv0.axis0.config.can.encoder_msg_rate_ms = 10
 odrv0.axis0.config.can.bus_voltage_msg_rate_ms = 10
 odrv0.axis0.config.can.iq_msg_rate_ms = 10
+odrv0.axis0.config.can.error_msg_rate_ms = 10
 odrv0.axis0.config.can.temperature_msg_rate_ms = 10
 
 print("Configuring power supply...")

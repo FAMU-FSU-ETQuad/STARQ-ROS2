@@ -13,4 +13,4 @@ RUN pip3 install serial
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
-WORKDIR /starq_ws
+WORKDIR /home/pi
