@@ -20,9 +20,9 @@ N = 500;
 publish_rate = f * N
 
 % Square dimensions
-width = 75;
-height = 75;
-y_offset = -150;
+width = 300;
+height = 300;
+y_offset = 0;
 
 top = [linspace(-width/2, width/2, N/4);
      linspace(height/2 + y_offset, height/2 + y_offset, N/4);
@@ -37,7 +37,8 @@ left = [linspace(-width/2, -width/2, N/4);
      linspace(-height/2 + y_offset, height/2 + y_offset, N/4);
      zeros(1,N/4)];
  
-square = [top, right, bottom, left];
+%square = [top, right, bottom, left];
+square = [bottom, left, top, right];
 
 figure
 plot(square(1,:), square(2,:));
