@@ -5,3 +5,6 @@ gaits:
   zero:
     file_name: 'zero.csv'
     publish_rate: 100 # Hz
+  swim-test:
+    file_name: 'swimtest-7pt.csv'
+    publish_rate: 312.5 # Hz

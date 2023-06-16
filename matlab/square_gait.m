@@ -37,8 +37,7 @@ left = [linspace(-width/2, -width/2, N/4);
      linspace(-height/2 + y_offset, height/2 + y_offset, N/4);
      zeros(1,N/4)];
  
-%square = [top, right, bottom, left];
-square = [bottom, left, top, right];
+square = [top, right, bottom, left];
 
 figure
 plot(square(1,:), square(2,:));
