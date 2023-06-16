@@ -67,7 +67,7 @@ def get_current(can_id : int):
 
 # Errors
 def get_error(can_id : int):
-    return recieve_can_msg(can_id, 'Get_Error')
+    return recieve_can_msg(can_id, 'Heartbeat')
 
 # Temperature data
 def get_temperature(can_id : int):

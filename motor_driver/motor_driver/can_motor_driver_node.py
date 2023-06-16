@@ -145,7 +145,7 @@ class MotorDriverNode(Node):
             bus_volt_msg.data.insert(motor.id, float(bus_vc_data['Bus_Voltage']))
             bus_curr_msg.data.insert(motor.id, float(bus_vc_data['Bus_Current']))
             iq_data_msg.data.insert(motor.id, float(iq_data['Iq_Measured']))
-            error_msg.data.insert(motor.id, float(error_data['Active_Errors']))
+            error_msg.data.insert(motor.id, float(error_data['Axis_Error']))
             #temp_msg.data.insert(motor.id, float(temp_data['Motor_Temperature']))
         self.encoder_pub.publish(encoder_msg)
         self.bus_voltage_pub.publish(bus_volt_msg)
