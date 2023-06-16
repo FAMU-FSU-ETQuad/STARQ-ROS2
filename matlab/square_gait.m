@@ -20,9 +20,9 @@ N = 500;
 publish_rate = f * N
 
 % Square dimensions
-width = 60;
-height = 60;
-y_offset = -160;
+width = 75;
+height = 75;
+y_offset = -150;
 
 top = [linspace(-width/2, width/2, N/4);
      linspace(height/2 + y_offset, height/2 + y_offset, N/4);
