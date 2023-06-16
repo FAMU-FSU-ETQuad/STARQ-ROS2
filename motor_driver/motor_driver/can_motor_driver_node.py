@@ -115,14 +115,12 @@ class MotorDriverNode(Node):
     def publish_info(self):
         info_msg = JointTrajectoryPoint()
         for motor in self.motors:
-            self.get_logger().info("A")
-            encoder_data = canfunc.get_encoder(motor.can_id) / motor.gear_ratio
-            self.get_logger().info("B")
+            encoder_data = canfunc.get_encoder(motor.can_id)
             if encoder_data is None:
                 self.get_logger().error("Could not read encoder data!")
                 return
-            info_msg.positions.insert(motor.id, float(encoder_data['Pos_Estimate']))
-            info_msg.velocities.insert(motor.id, float(encoder_data['Vel_Estimate']))
+            info_msg.positions.insert(motor.id, float(encoder_data['Pos_Estimate']) / motor.gear_ratio)
+            info_msg.velocities.insert(motor.id, float(encoder_data['Vel_Estimate']) / motor.gear_ratio)
         self.info_pub.publish(info_msg)
 
     # Put motors in idle state
