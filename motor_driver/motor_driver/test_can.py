@@ -7,7 +7,6 @@ _canbus = can.Bus("can0", bustype="socketcan")
 
 # Recieve a odrive message from CAN
 def recieve_can_msg(can_id : int, msg_name : str, msg_data):
-    send_can_msg(can_id, msg_name, msg_data)
     can_msg = _candb.get_message_by_name("Axis0_" + msg_name)
     for msg in _canbus:
         if msg.arbitration_id == ((can_id << 5) | can_msg.frame_id):
