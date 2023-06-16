@@ -6,8 +6,8 @@ motor0:
   gear_ratio: 6.0
   can_id: 0
   pos_gain: 25.0
-  vel_gain: 0.35
-  acc_gain: 0.0
+  vel_gain: 0.15
+  acc_gain: 0.30
   velocity_limit: 10.0
   current_limit: 5.0
 
@@ -17,8 +17,8 @@ motor1:
   gear_ratio: 6.0
   can_id: 1
   pos_gain: 25.0
-  vel_gain: 0.35
-  acc_gain: 0.0
+  vel_gain: 0.15
+  acc_gain: 0.30
   velocity_limit: 10.0
   current_limit: 5.0
 
