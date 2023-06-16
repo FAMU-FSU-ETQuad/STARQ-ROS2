@@ -17,7 +17,7 @@ def recieve_can_msg(can_id : int, msg_name : str, msg_data):
     can_msg = _candb.get_message_by_name("Axis0_" + msg_name)
     for msg in _canbus:
         if msg.arbitration_id == ((can_id << 5) | can_msg.frame_id):
-            return _candb.decode_message(msg_name, msg.data)
+            return _candb.decode_message("Axis0_" + msg_name, msg.data)
     return None
 
 # Clear motor errors
