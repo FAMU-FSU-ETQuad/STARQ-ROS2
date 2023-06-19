@@ -10,8 +10,8 @@ N = 500;
 publish_rate = f*N
 
 V_thrust = 1000; % mm/s
-V_swing = 1000; % mm/s
-V_return = 1000; % mm/s
+V_swing = 1500; % mm/s
+V_return = 1500; % mm/s
 
 L_touchdown = 150; % mm
 L_liftoff = 200; % mm
