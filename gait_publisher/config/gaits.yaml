@@ -19,4 +19,4 @@ gaits:
     publish_rate: 2500 # Hz
   jump-test:
     file_name: 'jump-test.csv'
-    publish_rate: 2500 # Hz
+    publish_rate: 1250 # Hz

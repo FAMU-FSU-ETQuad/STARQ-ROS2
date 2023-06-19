@@ -3,7 +3,7 @@ clear
 close all
 %% Params
 
-f = 5.0; % Hz
+f = 2.5; % Hz
 T = 1/f;
 
 N = 500;
@@ -13,9 +13,9 @@ V_thrust = 2000; % mm/s
 V_swing = 2000; % mm/s
 V_return = 2000; % mm/s
 
-L_touchdown = 100; % mm
-L_liftoff = 200; % mm
-L_swing = 100; % mm
+L_touchdown = 120; % mm
+L_liftoff = 180; % mm
+L_swing = 120; % mm
 
 
 %% Calculation
