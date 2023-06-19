@@ -16,4 +16,4 @@ gaits:
     publish_rate: 2500 # Hz
   hop-test:
     file_name: 'hop-test.csv'
-    publish_rate: 1500 # Hz
+    publish_rate: 2500 # Hz

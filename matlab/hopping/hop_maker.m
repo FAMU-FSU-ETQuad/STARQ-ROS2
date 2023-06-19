@@ -3,7 +3,7 @@ clear
 close all
 %% Params
 
-f = 3.0; % Hz
+f = 5.0; % Hz
 T = 1/f;
 
 N = 500;
