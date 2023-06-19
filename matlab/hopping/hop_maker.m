@@ -13,9 +13,9 @@ V_thrust = 2000; % mm/s
 V_swing = 2000; % mm/s
 V_return = 2000; % mm/s
 
-L_touchdown = 110; % mm
+L_touchdown = 100; % mm
 L_liftoff = 200; % mm
-L_swing = 110; % mm
+L_swing = 100; % mm
 
 
 %% Calculation

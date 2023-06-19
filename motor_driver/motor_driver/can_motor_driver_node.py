@@ -24,6 +24,9 @@ class ODriveMotor():
     gains : list[float]
     max_velocity : float
     max_current : float
+    position : float
+    velocity : float
+    torque : float
 
 class MotorDriverNode(Node):
     
@@ -35,7 +38,7 @@ class MotorDriverNode(Node):
         # Load config
         self.declare_parameter('config', 'motors.yaml')
         config_name = self.get_parameter('config').get_parameter_value().string_value
-        config_yaml = os.path.join(get_package_share_directory('motor_driver'), 'config', config_name)
+        config_yaml = "/home/pi/ros2_ws/src/boom_packages/motor_driver/config/" + config_name
         with open(config_yaml, 'r') as f:
             motors_dict = yaml.safe_load(f)
         if motors_dict is None:
@@ -82,6 +85,7 @@ class MotorDriverNode(Node):
         # ROS topics
         self.cmd_sub = self.create_subscription(JointTrajectoryPoint, '/motors/cmd', self.motors_cmd_callback, 10)
         self.encoder_pub = self.create_publisher(JointTrajectoryPoint, "/motors/info/encoders", 10)
+        self.pos_error_pub = self.create_publisher(JointTrajectoryPoint, "/motors/info/encoders_error", 10)
         self.error_pub = self.create_publisher(Float32MultiArray, "/motors/info/errors", 10)
         self.qcurrent_pub = self.create_publisher(Float32MultiArray, "/motors/info/q_current", 10)
         self.bus_voltage_pub = self.create_publisher(Float32MultiArray, "/motors/info/bus_voltage", 10)
@@ -108,19 +112,16 @@ class MotorDriverNode(Node):
 
         # Send position command to ODrive
         for motor in self.motors:
-            id = motor.id
-            can_id = motor.can_id
-            control_mode = motor.control_mode
-            position = get_command_value(msg.positions, id) * motor.gear_ratio
-            velocity = get_command_value(msg.velocities, id) * motor.gear_ratio
-            torque = get_command_value(msg.effort, id) * motor.gear_ratio
+            motor.position = get_command_value(msg.positions, motor.id) * motor.gear_ratio
+            motor.velocity = get_command_value(msg.velocities, motor.id) * motor.gear_ratio
+            motor.torque = get_command_value(msg.effort, motor.id) * motor.gear_ratio
 
-            if control_mode == 3:
-                canfunc.set_position(can_id, position=position, velocity_ff=velocity, torque_ff=torque)
-            elif control_mode == 2:
-                canfunc.set_velocity(can_id, velocity=velocity, torque_ff=torque)
-            elif control_mode == 1:
-                canfunc.set_torque(can_id, torque=torque)
+            if motor.control_mode == 3:
+                canfunc.set_position(motor.can_id, position=motor.position, velocity_ff=motor.velocity, torque_ff=motor.torque)
+            elif motor.control_mode == 2:
+                canfunc.set_velocity(motor.can_id, velocity=motor.velocity, torque_ff=motor.torque)
+            elif motor.control_mode == 1:
+                canfunc.set_torque(motor.can_id, torque=motor.torque)
 
             #self.get_logger().info(f"Sent motor command [P: {position}, V:{velocity}, T:{torque}] to {motor.name}")
 
@@ -129,6 +130,7 @@ class MotorDriverNode(Node):
     # Publish motor info
     def publish_info(self):
         encoder_msg = JointTrajectoryPoint()
+        encoder_error_msg = JointTrajectoryPoint()
         bus_volt_msg = Float32MultiArray()
         bus_curr_msg = Float32MultiArray()
         iq_data_msg = Float32MultiArray()
@@ -142,12 +144,15 @@ class MotorDriverNode(Node):
             #temp_data = canfunc.get_temperature(motor.can_id)
             encoder_msg.positions.insert(motor.id, float(encoder_data['Pos_Estimate']) / motor.gear_ratio)
             encoder_msg.velocities.insert(motor.id, float(encoder_data['Vel_Estimate']) / motor.gear_ratio)
+            encoder_error_msg.positions.insert(motor.id, float(encoder_data['Pos_Estimate']) - motor.position)
+            encoder_error_msg.velocities.insert(motor.id, float(encoder_data['Vel_Estimate']) - motor.velocity)
             bus_volt_msg.data.insert(motor.id, float(bus_vc_data['Bus_Voltage']))
             bus_curr_msg.data.insert(motor.id, float(bus_vc_data['Bus_Current']))
             iq_data_msg.data.insert(motor.id, float(iq_data['Iq_Measured']))
             error_msg.data.insert(motor.id, int(error_data['Axis_Error'].value))
             #temp_msg.data.insert(motor.id, float(temp_data['Motor_Temperature']))
         self.encoder_pub.publish(encoder_msg)
+        self.pos_error_pub.publish(encoder_error_msg)
         self.bus_voltage_pub.publish(bus_volt_msg)
         self.bus_current_pub.publish(bus_curr_msg)
         self.qcurrent_pub.publish(iq_data_msg)
