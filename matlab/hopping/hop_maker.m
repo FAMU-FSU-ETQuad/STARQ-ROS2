@@ -9,13 +9,13 @@ T = 1/f;
 N = 500;
 publish_rate = f*N
 
-V_thrust = 300; % mm/s
+V_thrust = 750; % mm/s
 V_swing = 1000; % mm/s
 V_return = 1000; % mm/s
 
 L_touchdown = 150; % mm
-L_liftoff = 180; % mm
-L_swing = 120; % mm
+L_liftoff = 200; % mm
+L_swing = 100; % mm
 
 
 %% Calculation
