@@ -70,7 +70,10 @@ class MotorDriverNode(Node):
                 can_id=motor_can_id,
                 gains=[motor_pgain, motor_vgain, motor_again],
                 max_velocity=motor_vlim,
-                max_current=motor_clim
+                max_current=motor_clim,
+                position=0.0,
+                velocity=0.0,
+                torque=0.0
             ))
             self.motor_count += 1
 
