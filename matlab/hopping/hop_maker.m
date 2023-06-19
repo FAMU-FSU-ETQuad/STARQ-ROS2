@@ -55,4 +55,4 @@ plot(t,h)
 x = zeros(N,1);
 z = zeros(N,1);
 dat = [x -h z];
-writematrix(dat, 'hop-test.csv')
+writematrix(dat, 'hop-test.csv', 'Delimiter', ',')
