@@ -9,7 +9,7 @@ T = 1/f;
 N = 500;
 publish_rate = f*N
 
-V_thrust = 750; % mm/s
+V_thrust = 1000; % mm/s
 V_swing = 1000; % mm/s
 V_return = 1000; % mm/s
 
