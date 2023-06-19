@@ -14,3 +14,6 @@ gaits:
   walk2-test:
     file_name: 'walktest2-7pt.csv'
     publish_rate: 2500 # Hz
+  hop-test:
+    file_name: 'hop-test.csv'
+    publish_rate: 1500 # Hz

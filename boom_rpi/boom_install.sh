@@ -28,8 +28,6 @@
 # set up startup script
 # - mv startup.service to /etc/systemd/system/startup.service
 # - Run on boot:
-# -- set can0 up type can bitrate 500000
-# -- git pull origin main
 # -- colcon build
 # -- source install/setup.bash
 # -- ros2 launch
