@@ -8,7 +8,7 @@ motor0:
   pos_gain: 25.0
   vel_gain: 0.15
   acc_gain: 0.30
-  velocity_limit: 10.0
+  velocity_limit: 20.0
   current_limit: 5.0
 
 motor1:
@@ -19,7 +19,7 @@ motor1:
   pos_gain: 25.0
   vel_gain: 0.15
   acc_gain: 0.30
-  velocity_limit: 10.0
+  velocity_limit: 20.0
   current_limit: 5.0
 
 # Control Modes
