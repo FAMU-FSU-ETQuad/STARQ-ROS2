@@ -1,5 +1,4 @@
-legs:
-  leg0:
-    id: 0
-    motor_ids: [0, 1]
-    kinematics: 'fivebar-2d'
+leg0:
+  id: 0
+  motor_ids: [0, 1]
+  kinematics: 'fivebar-2d'

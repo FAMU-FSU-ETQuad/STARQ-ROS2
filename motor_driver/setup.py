@@ -12,9 +12,7 @@ setup(
             [os.path.join('resource', 'ament_python')]),
         ('share/' + package_name, ['package.xml']),
         # Add this line for your launch file
-        (os.path.join('share', package_name, 'launch'), ['launch/motor_driver.xml']),
-        (os.path.join('share', package_name, 'config'), ['config/motors.yaml']),
-        (os.path.join('share', package_name, 'config'), ['config/boom.yaml']),
+        (os.path.join('share', package_name, 'launch'), ['launch/motor_driver.xml'])
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,7 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'motor_driver_node = motor_driver.can_motor_driver_node:main'
+            'motor_driver_node = motor_driver.motor_driver_node:main'
         ],
     },
 )

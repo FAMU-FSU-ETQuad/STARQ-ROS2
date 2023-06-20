@@ -12,4 +12,12 @@
         <param name="config" value="gaits.yaml"/>
     </node>
 
+    <node pkg="boom_encoders" exec="boom_encoders_node" name="boom_encoders">
+        <param name="serial_port" value="/dev/ttyACM0"/>
+        <param name="baud_rate" value="9600"/>
+        <param name="publish_rate" value="100"/>
+        <param name="base_cycles_per_revolution" value="161792"/>
+        <param name="arm_cycles_per_revolution" value="1"/>
+    </node>
+
 </launch>

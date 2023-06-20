@@ -6,7 +6,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud.hpp>
 #include <trajectory_msgs/msg/joint_trajectory_point.hpp>
-#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <leg_kinematics/types.hpp>
 #include <leg_kinematics/KinematicModel.hpp>
@@ -26,7 +25,7 @@ public:
 
         this->declare_parameter<std::string>("config");
         std::string rel_config_path = this->get_parameter("config").as_string();
-        config_path_ = ament_index_cpp::get_package_share_directory("leg_kinematics") + "/config/" + rel_config_path;
+        config_path_ = "/home/pi/ros2_ws/src/boom_packages/leg_kinematics/config/" + rel_config_path;
 
         cmd_publisher_ = this->create_publisher<trajectory_msgs::msg::JointTrajectoryPoint>(
             "/motors/cmd", 10);
@@ -129,9 +128,8 @@ public:
         RCLCPP_INFO(this->get_logger(), "Initializing Leg Kinematics node from %s", config_path_.c_str());
 
         const YAML::Node config = YAML::LoadFile(config_path_);
-        const YAML::Node legs_conf = config["legs"];
 
-        for (auto it = legs_conf.begin(); it != legs_conf.end(); ++it) {
+        for (auto it = config.begin(); it != config.end(); ++it) {
             const YAML::Node leg_conf = it->second;
 
             Leg leg;

@@ -3,6 +3,7 @@
 motor0:
   id: 0
   control_mode: 3
+  input_mode: 1
   gear_ratio: 6.0
   can_id: 0
   pos_gain: 25.0
@@ -14,6 +15,7 @@ motor0:
 motor1:
   id: 1
   control_mode: 3
+  input_mode: 1
   gear_ratio: 6.0
   can_id: 1
   pos_gain: 25.0
@@ -26,3 +28,10 @@ motor1:
 # 1: Torque control
 # 2: Velocity control
 # 3: Position control
+
+# Input Modes
+# 1: Passthrough (Any control mode)
+# 2: Velocity Ramp (Control mode 2 only)
+# 3: Position filter (Control mode 3 only)
+# 5: Trapezoidal Trajectory (Control mode 3 only)
+# 6: Torque Ramp (Control mode 1 only)

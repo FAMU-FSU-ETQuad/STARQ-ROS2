@@ -13,7 +13,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <sensor_msgs/msg/point_cloud.hpp>
-#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <yaml-cpp/yaml.h>
 
@@ -39,7 +38,7 @@ public:
 
         this->declare_parameter<std::string>("config");
         std::string rel_config_path = this->get_parameter("config").as_string();
-        config_path_ = ament_index_cpp::get_package_share_directory("gait_publisher") + "/config/" + rel_config_path;
+        config_path_ = "/home/pi/ros2_ws/src/boom_packages/gait_publisher/config/" + rel_config_path;
 
         gait_publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud>(
             "/legs/cmd", 1000);
@@ -82,9 +81,8 @@ public:
         RCLCPP_INFO(this->get_logger(), "Initializing Gait publisher node from %s", config_path_.c_str());
 
         const YAML::Node config = YAML::LoadFile(config_path_);
-        const YAML::Node gaits_conf = config["gaits"];
 
-        for (auto it = gaits_conf.begin(); it != gaits_conf.end(); ++it) {
+        for (auto it = config.begin(); it != config.end(); ++it) {
             std::string gait_name = it->first.as<std::string>();
             const YAML::Node gait_conf = it->second;
 

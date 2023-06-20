@@ -7,4 +7,4 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 docker build -t starq:boom -f "${SCRIPT_DIR}/Dockerfile" "${SCRIPT_DIR}"
 
 # Start the Docker container with the current directory mounted to /starq_ws, and automatically remove the container when it is stopped or exited
-docker run --rm -it --net host --mount type=bind,source="${SCRIPT_DIR}/../",target=/home/pi/src/boom_packages starq:boom
+docker run --rm -it --net host --mount type=bind,source="${SCRIPT_DIR}/../",target=/home/pi/ros2_ws/src/boom_packages starq:boom

@@ -29,8 +29,8 @@ def set_state(can_id : int, state : int):
     send_can_msg(can_id, 'Set_Axis_State', {'Axis_Requested_State': state})
 
 # Set Control Type
-def set_control_mode(can_id : int, mode : int):
-    send_can_msg(can_id, 'Set_Controller_Mode', {'Control_Mode': mode, 'Input_Mode': 1})
+def set_control_mode(can_id : int, cmode : int, imode : int):
+    send_can_msg(can_id, 'Set_Controller_Mode', {'Control_Mode': cmode, 'Input_Mode': imode})
 
 # Closed Loop Position Control
 def set_position(can_id : int, position : float, velocity_ff : float = 0.0, torque_ff : float = 0.0):
@@ -58,7 +58,7 @@ def get_encoder(can_id : int):
     return recieve_can_msg(can_id, 'Get_Encoder_Estimates')
 
 # Voltage data
-def get_voltage(can_id : int):
+def get_bus_voltage_current(can_id : int):
     return recieve_can_msg(can_id, 'Get_Bus_Voltage_Current')
 
 # Current data
