@@ -120,9 +120,9 @@ class MotorDriverNode(Node):
 
         # Send position command to ODrive
         for motor in self.motors:
-            motor.position = self._get_command_value(msg.positions, motor.id) * motor.gear_ratio
-            motor.velocity = self._get_command_value(msg.velocities, motor.id) * motor.gear_ratio
-            motor.torque = self._get_command_value(msg.effort, motor.id) * motor.gear_ratio
+            motor.position = _get_command_value(msg.positions, motor.id) * motor.gear_ratio
+            motor.velocity = _get_command_value(msg.velocities, motor.id) * motor.gear_ratio
+            motor.torque = _get_command_value(msg.effort, motor.id) * motor.gear_ratio
 
             if motor.control_mode == 3:
                 canfunc.set_position(motor.can_id, position=motor.position, velocity_ff=motor.velocity, torque_ff=motor.torque)
@@ -135,19 +135,19 @@ class MotorDriverNode(Node):
 
     def set_pgain_callback(self, msg : Float32MultiArray):
         for motor in self.motors:
-            pgain = self._get_command_value(msg.data, motor.id)
+            pgain = _get_command_value(msg.data, motor.id)
             motor.gains[0] = pgain
         self._update_gains()
 
     def set_vgain_callback(self, msg : Float32MultiArray):
         for motor in self.motors:
-            vgain = self._get_command_value(msg.data, motor.id)
+            vgain = _get_command_value(msg.data, motor.id)
             motor.gains[1] = vgain
         self._update_gains()
 
     def set_igain_callback(self, msg : Float32MultiArray):
         for motor in self.motors:
-            igain = self._get_command_value(msg.data, motor.id)
+            igain = _get_command_value(msg.data, motor.id)
             motor.gains[2] = igain
         self._update_gains()
 

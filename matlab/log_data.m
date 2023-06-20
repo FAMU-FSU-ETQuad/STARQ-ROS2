@@ -5,7 +5,7 @@ close all
 
 boom = BoomController();
 
-boom.send_gait('jump-test')
+boom.send_gait('jump')
 pause(1)
 encoder_data = boom.MotorEncoderData;
 encoder_error_data = boom.MotorEncoderErrorData;
