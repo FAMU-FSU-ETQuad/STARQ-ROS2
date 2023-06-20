@@ -113,7 +113,7 @@ private:
 
     CSVData read_csv_(const std::string& file_name) {
         std::cout << "READ" << std::endl;
-        const std::string abs_path = ament_index_cpp::get_package_share_directory("gait_publisher") + "/gaits/" + file_name;
+        const std::string abs_path = "/home/pi/ros2_ws/src/boom_packages/gait_publisher/gaits/" + file_name;
         CSVData data;
         std::ifstream file(abs_path);
         if (!file.is_open()) {
